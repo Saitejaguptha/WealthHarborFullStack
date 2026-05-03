@@ -27,7 +27,6 @@ const PeerComparisonSection: React.FC<Props> = ({ peers, currentSymbol }) => {
         { key: 'dividendYield', label: 'Div. Yield %',  fmt: v => `${formatNumberEnIn(Number(v))}%` },
     ];
 
-    const metricCols = cols.filter(c => c.key !== 'name');
 
     return (
         <div className="mb-6 md:mb-12">
