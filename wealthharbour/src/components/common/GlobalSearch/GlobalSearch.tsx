@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FiSearch, FiActivity, FiBriefcase, FiTrendingUp, FiPieChart } from 'react-icons/fi';
 import { StockService, MutualFundService, IndexService, ETFService } from '../../../services/api';
 import styles from './GlobalSearch.module.css';
