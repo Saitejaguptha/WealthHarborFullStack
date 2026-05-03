@@ -1,0 +1,9 @@
+node_modules/
+wealthharbour/node_modules/
+weealthhaibr_serevr/node_modules/
+wealthharbour/dist/
+weealthhaibr_serevr/dist/
+.env
+wealthharbour/.env
+weealthhaibr_serevr/.env
+.DS_Store

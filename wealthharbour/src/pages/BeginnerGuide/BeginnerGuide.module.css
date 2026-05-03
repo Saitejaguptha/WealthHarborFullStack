@@ -1,0 +1,102 @@
+/* BeginnerGuide.module.css */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.item {
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #fff;
+    transition: all 0.3s ease;
+}
+
+.itemOpen {
+    border-color: #6366f1;
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1);
+}
+
+.header {
+    width: 100%;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+}
+
+.titleGroup {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.icon {
+    font-size: 1.5rem;
+    color: #6366f1;
+}
+
+.title {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: #1e1b4b;
+    letter-spacing: -0.02em;
+}
+
+.chevron {
+    color: #94a3b8;
+    transition: transform 0.3s ease;
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+    color: #6366f1;
+}
+
+.content {
+    padding: 0 2rem 2rem;
+    display: grid;
+    grid-template-cols: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .content {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.section {
+    background: #f8fafc;
+    padding: 1.25rem;
+    border-radius: 16px;
+    border: 1px solid #f1f5f9;
+}
+
+.sectionTitle {
+    font-size: 0.625rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6366f1;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.sectionText {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #475569;
+    font-weight: 500;
+}
