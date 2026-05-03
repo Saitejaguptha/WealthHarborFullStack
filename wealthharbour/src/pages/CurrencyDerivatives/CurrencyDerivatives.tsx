@@ -231,8 +231,9 @@ const CurrencyDerivatives: React.FC = () => {
             </div>
 
             <div className="bg-white border border-indigo-50 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-indigo-500/5">
-                <div className="overflow-x-auto scrollbar-thin">
-                    <table className="w-full text-left min-w-[560px] md:min-w-[700px]">
+                <div className="overflow-x-auto custom-scrollbar pb-4">
+                    <table className="w-full text-left min-w-max">
+
                     <thead className="bg-indigo-50/50 text-indigo-400 text-[11px] font-black uppercase tracking-widest">
                         <tr>
                             <th className="px-8 py-5">Currency Pair</th>

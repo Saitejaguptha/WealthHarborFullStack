@@ -45,12 +45,12 @@
 /* Keep scrollbars visible and styled for accessibility */
 * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(99, 102, 241, 0.35) transparent;
+    scrollbar-color: rgba(99, 102, 241, 0.45) transparent;
 }
 
 *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 
 *::-webkit-scrollbar-track {
@@ -58,13 +58,16 @@
 }
 
 *::-webkit-scrollbar-thumb {
-    background: rgba(99, 102, 241, 0.35);
+    background: rgba(99, 102, 241, 0.45);
     border-radius: 9999px;
+    border: 1px solid transparent;
+    background-clip: content-box;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-    background: rgba(79, 70, 229, 0.55);
+    background: rgba(79, 70, 229, 0.7);
 }
+
 
 /* Utility class used by scrollable panels */
 .custom-scrollbar {
@@ -180,6 +183,23 @@
 @keyframes pulse-shimmer {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+    animation: marquee 30s linear infinite;
+}
+
+@media (min-width: 768px) {
+    .animate-marquee {
+        animation: none;
+        transform: none;
+        @apply justify-center w-full;
+    }
 }
 
 .custom-scrollbar::-webkit-scrollbar {

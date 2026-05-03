@@ -38,8 +38,9 @@ const FinancialTable = <T extends Record<string, any>>({
     };
 
     return (
-        <div className={`w-full overflow-x-auto scrollbar-none md:scrollbar-thin pb-2 ${className}`}>
-            <table className="w-full border-collapse min-w-max text-sm">
+        <div className={`w-full overflow-x-auto custom-scrollbar pb-2 ${className}`}>
+            <table className="w-full border-separate border-spacing-0 min-w-max text-sm">
+
                 <thead>
                     <tr className={`border-b border-indigo-50 ${headerClassName}`}>
                         <th className={`text-left px-5 py-3 text-[9px] md:text-[10px] font-black text-indigo-400 uppercase tracking-widest ${metricColumnWidth}`}>

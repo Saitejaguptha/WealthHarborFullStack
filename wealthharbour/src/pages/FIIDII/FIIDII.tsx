@@ -189,8 +189,9 @@ const FIIDII: React.FC = () => {
                                 <FiCalendar /> Daily Records
                             </div>
                         </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
+                        <div className="overflow-x-auto custom-scrollbar pb-4">
+                            <table className="w-full min-w-max">
+
                                 <thead>
                                     <tr className="bg-indigo-50/30">
                                         <th className="px-10 py-5 text-left text-[10px] font-black text-indigo-900/40 uppercase tracking-widest">Date</th>

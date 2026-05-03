@@ -210,13 +210,14 @@ const LandingHome: React.FC = () => {
             </div>
 
             {/* Returns Table Section */}
-            <div className="mt-12 overflow-x-auto">
+            <div className="mt-12 overflow-x-auto custom-scrollbar pb-4">
                 <div className="flex items-center gap-3 mb-8">
                     <div className="w-1 h-8 bg-indigo-600 rounded-full" />
                     <h2 className="text-2xl font-black text-indigo-950 tracking-tight uppercase">Asset Performance Matrix</h2>
                 </div>
                 
-                <table className="w-full border-separate border-spacing-y-3 min-w-[800px]">
+                <table className="w-full border-separate border-spacing-y-3 min-w-[700px] md:min-w-[800px]">
+
                     <thead>
                         <tr className="text-indigo-400 text-[10px] uppercase tracking-widest font-black">
                             <th className="px-6 py-4 text-left">Asset Type</th>

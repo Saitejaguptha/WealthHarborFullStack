@@ -192,8 +192,8 @@ const IPODetails: React.FC = () => {
                         <h2 className="text-2xl font-black text-indigo-950 mb-6 flex items-center gap-2">
                             <FiTrendingUp className="text-emerald-500" /> Quarterly Results
                         </h2>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
+                        <div className="overflow-x-auto custom-scrollbar pb-2">
+                            <table className="w-full text-left border-collapse min-w-max">
                                 <thead>
                                     <tr className="bg-indigo-50/50 text-indigo-900/40 text-[10px] font-black uppercase tracking-widest">
                                         <th className="p-4 rounded-l-2xl">Quarter</th>
@@ -219,8 +219,8 @@ const IPODetails: React.FC = () => {
                         <h2 className="text-2xl font-black text-indigo-950 mb-6 flex items-center gap-2">
                             <FiBarChart2 className="text-amber-500" /> Profit & Loss
                         </h2>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
+                        <div className="overflow-x-auto custom-scrollbar pb-2">
+                            <table className="w-full text-left border-collapse min-w-max">
                                 <thead>
                                     <tr className="bg-indigo-50/50 text-indigo-900/40 text-[10px] font-black uppercase tracking-widest">
                                         <th className="p-4 rounded-l-2xl">Year</th>
@@ -248,8 +248,8 @@ const IPODetails: React.FC = () => {
                         <h2 className="text-2xl font-black text-indigo-950 mb-6 flex items-center gap-2">
                             <FiDatabase className="text-indigo-500" /> Balance Sheet
                         </h2>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
+                        <div className="overflow-x-auto custom-scrollbar pb-2">
+                            <table className="w-full text-left border-collapse min-w-max">
                                 <thead>
                                     <tr className="bg-indigo-50/50 text-indigo-900/40 text-[10px] font-black uppercase tracking-widest">
                                         <th className="p-4 rounded-l-2xl">Year</th>
@@ -279,8 +279,8 @@ const IPODetails: React.FC = () => {
                         <h2 className="text-2xl font-black text-indigo-950 mb-6 flex items-center gap-2">
                             <FiGlobe className="text-indigo-500" /> Peer Comparison
                         </h2>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
+                        <div className="overflow-x-auto custom-scrollbar pb-2">
+                            <table className="w-full text-left border-collapse min-w-max">
                                 <thead>
                                     <tr className="bg-indigo-50/50 text-indigo-900/40 text-[10px] font-black uppercase tracking-widest">
                                         <th className="p-4 rounded-l-2xl">Company</th>

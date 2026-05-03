@@ -30,8 +30,9 @@ const PortfolioAnalysis: React.FC<PortfolioAnalysisProps> = ({ holdings, changes
             <div>
                 <SectionTitle icon={<FiPieChart />} title={title} />
                 <div className="bg-white rounded-[2.5rem] border border-indigo-50 shadow-xl shadow-indigo-50/50 overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left">
+                    <div className="overflow-x-auto custom-scrollbar pb-2">
+                        <table className="w-full text-left min-w-max">
+
                             <thead>
                                 <tr className="bg-indigo-50/40 border-b border-indigo-50">
                                     <th className="px-8 py-5 text-[10px] font-black text-indigo-400 uppercase tracking-widest">Company / Holding</th>

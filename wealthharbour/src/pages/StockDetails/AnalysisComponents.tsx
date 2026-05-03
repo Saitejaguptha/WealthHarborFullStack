@@ -242,7 +242,7 @@ export const ShareholdingSection: React.FC<{ stock: Stock }> = ({ stock }) => {
                     <div className="px-5 py-4 border-b border-indigo-50 bg-indigo-50/30">
                         <p className="text-xs font-black text-indigo-400 uppercase tracking-widest">Historical Trend (%)</p>
                     </div>
-                    <div className="w-full overflow-x-auto scrollbar-none md:scrollbar-thin pb-2">
+                    <div className="w-full overflow-x-auto custom-scrollbar pb-2">
                         <table className="w-full text-sm min-w-max border-collapse">
                             <thead>
                                 <tr className="border-b border-indigo-50 bg-indigo-50/20">

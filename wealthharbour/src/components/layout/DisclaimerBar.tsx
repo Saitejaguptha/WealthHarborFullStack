@@ -100,22 +100,36 @@ const DisclaimerBar: React.FC = () => {
 
     return (
         <>
-            <div className="fixed top-0 left-0 right-0 h-[30px] bg-indigo-950 text-white flex items-center justify-center text-[10px] md:text-xs font-bold z-[50] px-4 overflow-hidden whitespace-nowrap border-b border-white/10">
-                <span className="flex items-center gap-2">
-                    <span className="bg-rose-500 text-white px-1.5 py-0.5 rounded-[4px] text-[8px] uppercase tracking-tighter">Statutory</span>
-                    <span className="opacity-90">Investments are subject to market risks. Read all scheme documents carefully.</span>
-                    <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="underline hover:text-indigo-300 ml-2 transition-colors cursor-pointer"
-                    >
-                        [View Full Disclaimer]
-                    </button>
-                </span>
+            <div className="fixed top-0 left-0 right-0 h-[30px] bg-indigo-950 text-white flex items-center z-[50] border-b border-white/10">
+                <div className="flex items-center gap-2 px-4 shrink-0 bg-indigo-950 z-10 h-full">
+                    <span className="bg-rose-500 text-white px-1.5 py-0.5 rounded-[4px] text-[8px] uppercase tracking-tighter font-black">Statutory</span>
+                </div>
+                
+                <div className="flex-1 overflow-hidden relative h-full flex items-center">
+                    <div className="whitespace-nowrap animate-marquee flex items-center gap-4 text-[10px] md:text-xs font-bold px-4">
+                        <span className="opacity-90">Investments are subject to market risks. Read all scheme documents carefully.</span>
+                        <button
+                            onClick={() => setIsModalOpen(true)}
+                            className="underline hover:text-indigo-300 transition-colors cursor-pointer shrink-0"
+                        >
+                            [View Full Disclaimer]
+                        </button>
+                        {/* Duplicate for seamless loop on small screens */}
+                        <span className="opacity-90 md:hidden">Investments are subject to market risks. Read all scheme documents carefully.</span>
+                        <button
+                            onClick={() => setIsModalOpen(true)}
+                            className="underline hover:text-indigo-300 transition-colors cursor-pointer shrink-0 md:hidden"
+                        >
+                            [View Full Disclaimer]
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {createPortal(modalContent, document.body)}
         </>
     );
+
 };
 
 export default DisclaimerBar;
