@@ -21,7 +21,6 @@ const GlobalSearch: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -55,8 +54,8 @@ const GlobalSearch: React.FC = () => {
                         name: s.name,
                         subtitle: s.symbol,
                         price: s.price,
-                        change: s.change_pct,
-                        isPositive: s.isPositive,
+                        change: s.changePercent,
+                        isPositive: s.changePercent >= 0,
                         type: 'Stock' as const,
                         route: `/stocks/${s.symbol}`
                     })),

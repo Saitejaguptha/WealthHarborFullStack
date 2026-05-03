@@ -83,7 +83,7 @@ export const useAuth = () => {
         }
     };
 
-    const addToWatchlist = async (item: { item_id: string; item_name: string; symbol: string; item_type: string; price?: number; change?: number; change_pct?: number }) => {
+    const addToWatchlist = async (item: { item_id: string; item_name: string; symbol: string; item_type: 'stock' | 'mutual-fund' | 'etf' | 'commodity' | 'index'; price?: number; change?: number; change_pct?: number }) => {
         if (user?.user_uuid) {
             await dispatch(addToWatchlistAsync({ ...item, user_uuid: user.user_uuid }));
         }

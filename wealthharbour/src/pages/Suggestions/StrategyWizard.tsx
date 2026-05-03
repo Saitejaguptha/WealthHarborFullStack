@@ -20,7 +20,7 @@ interface QuizForm {
 const StrategyWizard: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const { control, handleSubmit, watch, setValue } = useForm<QuizForm>({
+    const { control, handleSubmit, watch } = useForm<QuizForm>({
         defaultValues: {
             assetClass: '',
             marketCap: '',

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FiPlusCircle, FiMinusCircle, FiTrendingUp, FiTrendingDown, FiPieChart, FiActivity } from 'react-icons/fi';
 import SectionTitle from './SectionTitle';
-import { formatNumberEnIn } from '../../utils/numberFormat';
+
 
 interface PortfolioHolding {
     name: string;

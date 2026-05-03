@@ -31,7 +31,7 @@ export const addToWatchlist = async (item: WatchlistItem) => {
         item_id: item.item_id,
         item_name: item.item_name,
         symbol: item.symbol,
-        item_type: item.item_type,
+        item_type: item.item_type as 'stock' | 'mutual-fund' | 'etf' | 'commodity' | 'index',
         price: typeof item.price === 'number' ? item.price : undefined,
         change: item.change,
         change_pct: item.change_pct,

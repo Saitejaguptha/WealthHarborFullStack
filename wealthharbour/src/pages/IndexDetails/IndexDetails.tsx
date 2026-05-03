@@ -4,7 +4,7 @@ import {
     FiArrowLeft, FiTrendingUp, FiTrendingDown, FiPieChart,
     FiActivity, FiTarget, FiDollarSign, FiBarChart2, FiAward,
     FiArrowUpRight, FiArrowDownRight, FiBriefcase, FiLayers, FiGlobe, FiShield,
-    FiZap, FiCheckCircle, FiInfo, FiRepeat
+    FiZap, FiCheckCircle, FiRepeat
 } from 'react-icons/fi';
 import { IndexService } from '../../services/api';
 import type { MarketIndex } from '../../types/indexData';
@@ -230,7 +230,7 @@ const IndexDetails: React.FC = () => {
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
                                         <h3 className="text-indigo-950 font-black text-lg tracking-tight uppercase">Expert View</h3>
-                                        <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${getSentimentStyles(indexData.longTermView)}`}>
+                                        <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${getSentimentStyles(indexData.longTermView || 'Neutral')}`}>
                                             {indexData.longTermView}
                                         </span>
                                     </div>
@@ -256,9 +256,9 @@ const IndexDetails: React.FC = () => {
                         {/* Metrics Grid - Full Width */}
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                             {[
-                                { label: 'Short Term', value: indexData.shortTermView, ...getSentimentColor(indexData.shortTermView) },
+                                { label: 'Short Term', value: indexData.shortTermView, ...getSentimentColor(indexData.shortTermView || 'Neutral') },
                                 { label: 'Mid Term', value: indexData.midTermView ?? 'NEUTRAL', ...getSentimentColor(indexData.midTermView ?? 'NEUTRAL') },
-                                { label: 'Long Term', value: indexData.longTermView, ...getSentimentColor(indexData.longTermView) }
+                                { label: 'Long Term', value: indexData.longTermView, ...getSentimentColor(indexData.longTermView || 'Neutral') }
                             ].map((m, i) => (
                                 <div key={i} className={`${m.bg} p-4 rounded-2xl border border-white/50 flex flex-col justify-center`}>
                                     <span className="text-indigo-900/40 text-[9px] font-black uppercase tracking-widest mb-1 truncate">{m.label}</span>

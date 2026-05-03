@@ -12,11 +12,9 @@ import {
     FiDatabase,
     FiShield,
     FiPieChart,
-    FiArrowRight,
-    FiSearch
+    FiArrowRight
 } from 'react-icons/fi';
 import PageShell from '../../components/layout/PageShell';
-import PageHeader from '../../components/layout/PageHeader';
 
 interface AssetData {
     name: string;

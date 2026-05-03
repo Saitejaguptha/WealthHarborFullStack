@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import {
     FiTrendingUp,
     FiBriefcase,
@@ -14,7 +14,6 @@ import {
     FiFlag,
     FiShield,
     FiZap,
-    FiStar
 } from 'react-icons/fi';
 import { NAV_ITEMS } from '../../../constants/navigation';
 import { useAppSelector } from '../../../store/hooks';

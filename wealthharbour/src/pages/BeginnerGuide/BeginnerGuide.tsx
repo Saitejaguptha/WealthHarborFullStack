@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiChevronDown, FiBookOpen, FiDollarSign, FiAlertTriangle, FiTrendingUp, FiActivity, FiLayers, FiBriefcase, FiPieChart, FiShield, FiDatabase, FiBarChart2, FiFlag } from 'react-icons/fi';
+import { FiChevronDown, FiBookOpen, FiTrendingUp, FiActivity, FiLayers, FiBriefcase, FiPieChart, FiShield, FiDatabase, FiBarChart2, FiFlag } from 'react-icons/fi';
 import PageShell from '../../components/layout/PageShell';
 import PageHeader from '../../components/layout/PageHeader';
 import styles from './BeginnerGuide.module.css';

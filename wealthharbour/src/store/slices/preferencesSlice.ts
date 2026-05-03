@@ -13,7 +13,7 @@ interface QuizData {
   riskTolerance?: string;
   timeHorizon?: string;
   preferredSectors?: string[];
-  marketCap?: string[];
+  marketCap?: string | string[];
   [key: string]: any;
 }
 

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
     FiArrowLeft, FiActivity, FiBriefcase, FiUser, FiTrendingUp, 
     FiDownload, FiPlus, FiCheck, FiShield, FiLayers, 
-    FiMinusCircle, 
+    FiMinusCircle, FiTrendingDown,
     FiTarget, FiDollarSign, FiAward, FiRepeat, FiZap, FiCheckCircle
 } from 'react-icons/fi';
 import PriceHistoryChart from '../../components/common/PriceHistoryChart';
@@ -209,8 +209,8 @@ const MutualFundDetails: React.FC = () => {
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
                                         <h3 className="text-indigo-950 font-black text-lg tracking-tight uppercase">Expert View</h3>
-                                        <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${getSentimentStyles(fund.longTermView)}`}>
-                                            {fund.longTermView}
+                                        <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${getSentimentStyles(fund.longTermView || 'Neutral')}`}>
+                                            {fund.longTermView || 'Neutral'}
                                         </span>
                                     </div>
 
@@ -338,7 +338,7 @@ const MutualFundDetails: React.FC = () => {
                         <div>
                             <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Fund Manager</p>
                             <h3 className="text-3xl font-black text-indigo-950">{fund.fundManager?.name || 'Lead Manager'}</h3>
-                            <p className="text-sm font-bold text-indigo-900/50 mt-1">{fund.fundManager?.tenure || fund.managerTenure} tenure in this fund</p>
+                            <p className="text-sm font-bold text-indigo-900/50 mt-1">{fund.fundManager?.tenure || 'N/A'} tenure in this fund</p>
                         </div>
 
                     </div>

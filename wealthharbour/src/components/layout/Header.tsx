@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { FiMenu, FiInfo, FiLogOut, FiSearch, FiStar } from 'react-icons/fi';
+import { FiMenu, FiInfo, FiLogOut, FiStar } from 'react-icons/fi';
 import { useAuth } from '../../features/auth/authHooks';
 import GlobalSearch from '../common/GlobalSearch/GlobalSearch';
 import styles from './Header.module.css';

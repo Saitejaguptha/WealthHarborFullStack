@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-    FiArrowLeft, FiActivity, FiPieChart, FiZap, FiBarChart2, FiTrendingUp, 
+    FiArrowLeft, FiActivity, FiZap, FiBarChart2, FiTrendingUp, 
     FiCheck, FiPlus, FiDroplet, FiBriefcase, FiLayers, 
     FiTarget, FiAward, FiInfo, FiTrendingDown, FiRepeat, FiPercent
 } from 'react-icons/fi';
@@ -211,7 +211,7 @@ const ETFDetails: React.FC = () => {
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
                                         <h3 className="text-indigo-950 font-black text-lg tracking-tight uppercase">Expert Pulse</h3>
-                                        <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${getSentimentStyles(etf.longTermView)}`}>
+                                        <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${getSentimentStyles(etf.longTermView || 'Neutral')}`}>
                                             {etf.longTermView}
                                         </span>
                                     </div>
@@ -238,7 +238,7 @@ const ETFDetails: React.FC = () => {
                         {/* Metrics Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {[
-                                { label: 'Horizon', value: etf.longTermView, ...getSentimentColor(etf.longTermView) }
+                                { label: 'Horizon', value: etf.longTermView, ...getSentimentColor(etf.longTermView || 'Neutral') }
                             ].map((m, i) => (
                                 <div key={i} className={`${m.bg} p-4 rounded-2xl border border-white/50 flex flex-col justify-center`}>
                                     <span className="text-indigo-900/40 text-[9px] font-black uppercase tracking-widest mb-1 truncate">{m.label}</span>

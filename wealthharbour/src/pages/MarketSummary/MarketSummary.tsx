@@ -128,7 +128,7 @@ const MarketSummary: React.FC = () => {
                                         {stat.icon}
                                     </div>
                                 </div>
-                                <p className="mt-6 text-xs text-indigo-900/40 font-medium leading-relaxed line-clamp-2">{stat.detail}</p>
+                                <p className="mt-6 text-xs text-indigo-900/40 font-medium leading-relaxed line-clamp-2">{stat.forecast}</p>
                             </button>
                         ))}
                     </div>
