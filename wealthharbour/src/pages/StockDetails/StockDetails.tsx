@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
     FiArrowLeft, FiTrendingUp, FiTrendingDown, FiPieChart,
     FiActivity, FiTarget, FiBarChart2, FiAward, FiRefreshCw,
@@ -32,7 +32,7 @@ import {
 const StockDetails: React.FC = () => {
     const { symbol } = useParams<{ symbol: string }>();
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
+
     const watchlist = useAppSelector(state => state.auth.watchlist);
     
     const { data: stock, isLoading, isError, error, refetch } = useQuery({

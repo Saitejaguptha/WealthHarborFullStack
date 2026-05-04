@@ -41,15 +41,20 @@ const GlobalSearch: React.FC = () => {
 
             setIsLoading(true);
             try {
-                const [stocks, mfs, indices, etfs] = await Promise.all([
-                    StockService.getStocks({ search: query }).catch(() => []),
-                    MutualFundService.getMutualFunds().catch(() => []),
-                    IndexService.getAllIndices({ search: query }).catch(() => []),
-                    ETFService.getETFs().catch(() => [])
+                const [stocksData, mfsData, indicesData, etfsData] = await Promise.all([
+                    StockService.getStocks({ search: query }).catch(() => ({ stocks: [] })),
+                    MutualFundService.getMutualFunds().catch(() => ({ funds: [] })),
+                    IndexService.getAllIndices({ search: query }).catch(() => ({ indices: [] })),
+                    ETFService.getETFs().catch(() => ({ etfs: [] }))
                 ]);
+                
+                const stocks = (stocksData as any).stocks || [];
+                const mfs = (mfsData as any).funds || [];
+                const indices = (indicesData as any).indices || [];
+                const etfs = (etfsData as any).etfs || [];
 
                 const formattedResults: SearchResult[] = [
-                    ...stocks.slice(0, 3).map(s => ({
+                    ...stocks.slice(0, 3).map((s: any) => ({
                         id: s.symbol,
                         name: s.name,
                         subtitle: s.symbol,
@@ -59,7 +64,7 @@ const GlobalSearch: React.FC = () => {
                         type: 'Stock' as const,
                         route: `/stocks/${s.symbol}`
                     })),
-                    ...mfs.filter(m => m.name.toLowerCase().includes(query.toLowerCase())).slice(0, 3).map(m => ({
+                    ...mfs.filter((m: any) => m.name.toLowerCase().includes(query.toLowerCase())).slice(0, 3).map((m: any) => ({
                         id: m.id,
                         name: m.name,
                         subtitle: m.fundHouse,
@@ -69,7 +74,7 @@ const GlobalSearch: React.FC = () => {
                         type: 'Mutual Fund' as const,
                         route: `/mutual-funds/${m.id}`
                     })),
-                    ...indices.slice(0, 3).map(idx => ({
+                    ...indices.slice(0, 3).map((idx: any) => ({
                         id: idx.name,
                         name: idx.name,
                         subtitle: idx.exchange,
@@ -79,7 +84,7 @@ const GlobalSearch: React.FC = () => {
                         type: 'Index' as const,
                         route: `/index-details/${encodeURIComponent(idx.name)}`
                     })),
-                    ...etfs.filter(e => e.name.toLowerCase().includes(query.toLowerCase()) || e.symbol.toLowerCase().includes(query.toLowerCase())).slice(0, 3).map(e => ({
+                    ...etfs.filter((e: any) => e.name.toLowerCase().includes(query.toLowerCase()) || e.symbol.toLowerCase().includes(query.toLowerCase())).slice(0, 3).map((e: any) => ({
                         id: e.id,
                         name: e.name,
                         subtitle: e.symbol,

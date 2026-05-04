@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiActivity, FiPieChart, FiBriefcase, FiLayers, FiSearch } from 'react-icons/fi';
+import { FiActivity, FiPieChart, FiBriefcase, FiLayers } from 'react-icons/fi';
 import { useInView } from 'react-intersection-observer';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import AssetCard from '../../components/common/AssetCard/AssetCard';

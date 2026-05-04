@@ -46,7 +46,7 @@ const stocksSlice = createSlice({
             })
             .addCase(fetchStocks.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.stocks = action.payload;
+                state.stocks = action.payload.stocks || [];
             })
             .addCase(fetchStockDetails.fulfilled, (state, action) => {
                 state.currentStock = action.payload || null;

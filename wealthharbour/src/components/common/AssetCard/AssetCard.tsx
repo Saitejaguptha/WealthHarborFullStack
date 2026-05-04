@@ -2,7 +2,7 @@ import React from 'react';
 import { FiTrendingUp, FiTrendingDown, FiStar } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { MutualFundService, StockService, ETFService } from '../../../services/api';
+import { MutualFundService, StockService, ETFService, IndexService } from '../../../services/api';
 import { formatNumberEnIn } from '../../../utils/numberFormat';
 import { useAppSelector } from '../../../store/hooks';
 import { addToWatchlist, removeFromWatchlist } from '../../../utils/watchlistUtils';

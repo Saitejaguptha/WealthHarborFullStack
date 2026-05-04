@@ -38,10 +38,10 @@ const fundsSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(fetchETFs.fulfilled, (state, action) => {
-                state.etfs = action.payload;
+                state.etfs = action.payload.etfs || [];
             })
             .addCase(fetchMutualFunds.fulfilled, (state, action) => {
-                state.mutualFunds = action.payload;
+                state.mutualFunds = action.payload.funds || [];
             });
     }
 });

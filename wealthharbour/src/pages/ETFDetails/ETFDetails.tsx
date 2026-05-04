@@ -235,7 +235,7 @@ const ETFDetails: React.FC = () => {
                         {/* Analysis Tags */}
                         {etf.validations && etf.validations.length > 0 && (
                             <div className="flex flex-wrap gap-2 pt-4 border-t border-indigo-50/50">
-                                {etf.validations.slice(0, 4).map((v, i) => (
+                                {etf.validations.slice(0, 4).map((v: string, i: number) => (
                                     <span key={i} className="text-[9px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl border border-emerald-100/50">
                                         {v}
                                     </span>
@@ -280,7 +280,7 @@ const ETFDetails: React.FC = () => {
             {/* Portfolio Analysis: Holdings and Changes */}
             <PortfolioAnalysis 
                 title="ETF Constituents & Weightage"
-                holdings={(etf.topHoldings || []).map(h => ({ 
+                holdings={(etf.topHoldings || []).map((h: any) => ({ 
                     name: h.company, 
                     weightage: h.allocation,
                     sector: 'Various'

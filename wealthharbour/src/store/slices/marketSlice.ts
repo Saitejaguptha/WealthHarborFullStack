@@ -54,7 +54,7 @@ const marketSlice = createSlice({
             })
             .addCase(fetchIndices.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.indices = action.payload || [];
+                state.indices = action.payload.indices || [];
             })
             .addCase(fetchIndices.rejected, (state, action) => {
                 state.isLoading = false;
