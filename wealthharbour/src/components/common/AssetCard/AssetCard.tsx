@@ -1,6 +1,8 @@
 import React from 'react';
 import { FiTrendingUp, FiTrendingDown, FiStar } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { MutualFundService, StockService, ETFService } from '../../../services/api';
 import { formatNumberEnIn } from '../../../utils/numberFormat';
 import { useAppSelector } from '../../../store/hooks';
 import { addToWatchlist, removeFromWatchlist } from '../../../utils/watchlistUtils';
@@ -43,8 +45,37 @@ const AssetCard: React.FC<AssetCardProps> = ({
     metrics,
     watchlistItem
 }) => {
+    const queryClient = useQueryClient();
     const watchlist = useAppSelector(state => state.auth.watchlist);
     const inWatchlist = watchlistItem ? watchlist.some(w => w.item_id === watchlistItem.item_id) : false;
+
+    const handlePrefetch = () => {
+        if (!watchlistItem) return;
+        
+        const { item_id, item_type } = watchlistItem;
+        
+        if (item_type === 'mutual-fund') {
+            queryClient.prefetchQuery({
+                queryKey: ['mutual-fund', item_id],
+                queryFn: () => MutualFundService.analyzeMF(item_id),
+            });
+        } else if (item_type === 'stock') {
+            queryClient.prefetchQuery({
+                queryKey: ['stock', item_id],
+                queryFn: () => StockService.analyzeStock(item_id),
+            });
+        } else if (item_type === 'etf') {
+            queryClient.prefetchQuery({
+                queryKey: ['etf', item_id],
+                queryFn: () => ETFService.analyzeETF(item_id),
+            });
+        } else if (item_type === 'index') {
+            queryClient.prefetchQuery({
+                queryKey: ['index', item_id],
+                queryFn: () => IndexService.getIndexByName(item_id),
+            });
+        }
+    };
 
     const handleWatchlist = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -66,7 +97,10 @@ const AssetCard: React.FC<AssetCardProps> = ({
     };
 
     return (
-        <div className={styles.card}>
+        <div 
+            className={styles.card}
+            onMouseEnter={handlePrefetch}
+        >
             <div className={styles.bgIcon}>
                 <Icon className="text-8xl text-indigo-950" />
             </div>
@@ -144,4 +178,4 @@ const AssetCard: React.FC<AssetCardProps> = ({
     );
 };
 
-export default AssetCard;
+export default React.memo(AssetCard);

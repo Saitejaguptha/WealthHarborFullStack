@@ -242,7 +242,8 @@ export const ShareholdingSection: React.FC<{ stock: Stock }> = ({ stock }) => {
                     <div className="px-5 py-4 border-b border-indigo-50 bg-indigo-50/30">
                         <p className="text-xs font-black text-indigo-400 uppercase tracking-widest">Historical Trend (%)</p>
                     </div>
-                    <div className="w-full overflow-x-auto custom-scrollbar pb-2">
+                    {/* Desktop */}
+                    <div className="hidden md:block w-full overflow-x-auto custom-scrollbar pb-2">
                         <table className="w-full text-sm min-w-max border-collapse">
                             <thead>
                                 <tr className="border-b border-indigo-50 bg-indigo-50/20">
@@ -272,6 +273,31 @@ export const ShareholdingSection: React.FC<{ stock: Stock }> = ({ stock }) => {
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    {/* Mobile: Stacked by quarter */}
+                    <div className="md:hidden space-y-2 p-3">
+                        {data.map(d => (
+                            <div key={d.quarter} className="bg-indigo-50/30 rounded-xl border border-indigo-100/50 overflow-hidden">
+                                <div className="px-4 py-2 bg-indigo-600 text-white">
+                                    <span className="text-[10px] font-black uppercase tracking-widest">{d.quarter}</span>
+                                </div>
+                                <div className="divide-y divide-indigo-100/50">
+                                    {holders.map(h => (
+                                        <div key={h.key} className="flex justify-between items-center px-4 py-2">
+                                            <div className="flex items-center gap-2">
+                                                <div className={`w-2 h-2 rounded-full ${h.bg} shrink-0`} />
+                                                <span className="text-[11px] font-bold text-indigo-900/60">{h.label}</span>
+                                            </div>
+                                            <span className="text-[12px] font-black text-indigo-950 tabular-nums">{formatNumberEnIn(d[h.key] as number)}%</span>
+                                        </div>
+                                    ))}
+                                    <div className="flex justify-between items-center px-4 py-2 bg-indigo-50/40">
+                                        <span className="text-[11px] font-black text-indigo-700">Shareholders</span>
+                                        <span className="text-[12px] font-black text-indigo-700 tabular-nums">{formatIntegerEnIn(d.noOfShareholders)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

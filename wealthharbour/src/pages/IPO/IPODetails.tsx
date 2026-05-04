@@ -188,11 +188,12 @@ const IPODetails: React.FC = () => {
                     </div>
 
                     {/* Quarterly Results */}
-                    <div className="card-luxury p-8">
-                        <h2 className="text-2xl font-black text-indigo-950 mb-6 flex items-center gap-2">
+                    <div className="card-luxury p-5 md:p-8">
+                        <h2 className="text-xl md:text-2xl font-black text-indigo-950 mb-6 flex items-center gap-2">
                             <FiTrendingUp className="text-emerald-500" /> Quarterly Results
                         </h2>
-                        <div className="overflow-x-auto custom-scrollbar pb-2">
+                        {/* Desktop */}
+                        <div className="hidden md:block overflow-x-auto custom-scrollbar pb-2">
                             <table className="w-full text-left border-collapse min-w-max">
                                 <thead>
                                     <tr className="bg-indigo-50/50 text-indigo-900/40 text-[10px] font-black uppercase tracking-widest">
@@ -212,14 +213,33 @@ const IPODetails: React.FC = () => {
                                 </tbody>
                             </table>
                         </div>
+                        {/* Mobile */}
+                        <div className="md:hidden space-y-2">
+                            {ipoDetails.quarterlyResults.map((q: any) => (
+                                <div key={q.quarter} className="bg-indigo-50/30 rounded-xl border border-indigo-100/50 p-3">
+                                    <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-2">{q.quarter}</p>
+                                    <div className="flex justify-between">
+                                        <div>
+                                            <p className="text-[9px] font-bold text-indigo-400 uppercase">Revenue</p>
+                                            <p className="text-sm font-black text-indigo-900">{q.revenue}</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-[9px] font-bold text-indigo-400 uppercase">PAT</p>
+                                            <p className="text-sm font-black text-emerald-600">{q.pat}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Profit & Loss */}
-                    <div className="card-luxury p-8">
-                        <h2 className="text-2xl font-black text-indigo-950 mb-6 flex items-center gap-2">
+                    <div className="card-luxury p-5 md:p-8">
+                        <h2 className="text-xl md:text-2xl font-black text-indigo-950 mb-6 flex items-center gap-2">
                             <FiBarChart2 className="text-amber-500" /> Profit & Loss
                         </h2>
-                        <div className="overflow-x-auto custom-scrollbar pb-2">
+                        {/* Desktop */}
+                        <div className="hidden md:block overflow-x-auto custom-scrollbar pb-2">
                             <table className="w-full text-left border-collapse min-w-max">
                                 <thead>
                                     <tr className="bg-indigo-50/50 text-indigo-900/40 text-[10px] font-black uppercase tracking-widest">
@@ -241,14 +261,37 @@ const IPODetails: React.FC = () => {
                                 </tbody>
                             </table>
                         </div>
+                        {/* Mobile */}
+                        <div className="md:hidden space-y-2">
+                            {ipoDetails.profitAndLoss.map((pnl: any) => (
+                                <div key={pnl.year} className="bg-indigo-50/30 rounded-xl border border-indigo-100/50 p-3">
+                                    <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-2">{pnl.year}</p>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        <div>
+                                            <p className="text-[9px] font-bold text-indigo-400 uppercase">Sales</p>
+                                            <p className="text-sm font-black text-indigo-900">{pnl.sales}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] font-bold text-indigo-400 uppercase">Expenses</p>
+                                            <p className="text-sm font-black text-rose-600">{pnl.expenses}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] font-bold text-indigo-400 uppercase">Net Profit</p>
+                                            <p className="text-sm font-black text-emerald-600">{pnl.pat}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Balance Sheet */}
-                    <div className="card-luxury p-8">
-                        <h2 className="text-2xl font-black text-indigo-950 mb-6 flex items-center gap-2">
+                    <div className="card-luxury p-5 md:p-8">
+                        <h2 className="text-xl md:text-2xl font-black text-indigo-950 mb-6 flex items-center gap-2">
                             <FiDatabase className="text-indigo-500" /> Balance Sheet
                         </h2>
-                        <div className="overflow-x-auto custom-scrollbar pb-2">
+                        {/* Desktop */}
+                        <div className="hidden md:block overflow-x-auto custom-scrollbar pb-2">
                             <table className="w-full text-left border-collapse min-w-max">
                                 <thead>
                                     <tr className="bg-indigo-50/50 text-indigo-900/40 text-[10px] font-black uppercase tracking-widest">
@@ -272,14 +315,41 @@ const IPODetails: React.FC = () => {
                                 </tbody>
                             </table>
                         </div>
+                        {/* Mobile */}
+                        <div className="md:hidden space-y-2">
+                            {ipoDetails.balanceSheet.map((bs: any) => (
+                                <div key={bs.year} className="bg-indigo-50/30 rounded-xl border border-indigo-100/50 p-3">
+                                    <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-2">{bs.year}</p>
+                                    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                                        <div>
+                                            <p className="text-[9px] font-bold text-indigo-400 uppercase">Share Capital</p>
+                                            <p className="text-sm font-black text-indigo-900">{bs.shareCapital}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] font-bold text-indigo-400 uppercase">Reserves</p>
+                                            <p className="text-sm font-black text-emerald-600">{bs.reserves}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] font-bold text-indigo-400 uppercase">Borrowings</p>
+                                            <p className="text-sm font-black text-rose-600">{bs.borrowings}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] font-bold text-indigo-400 uppercase">Total Assets</p>
+                                            <p className="text-sm font-black text-indigo-950">{bs.totalAssets}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Peer Comparison */}
-                    <div className="card-luxury p-8">
-                        <h2 className="text-2xl font-black text-indigo-950 mb-6 flex items-center gap-2">
+                    <div className="card-luxury p-5 md:p-8">
+                        <h2 className="text-xl md:text-2xl font-black text-indigo-950 mb-6 flex items-center gap-2">
                             <FiGlobe className="text-indigo-500" /> Peer Comparison
                         </h2>
-                        <div className="overflow-x-auto custom-scrollbar pb-2">
+                        {/* Desktop */}
+                        <div className="hidden md:block overflow-x-auto custom-scrollbar pb-2">
                             <table className="w-full text-left border-collapse min-w-max">
                                 <thead>
                                     <tr className="bg-indigo-50/50 text-indigo-900/40 text-[10px] font-black uppercase tracking-widest">
@@ -303,6 +373,31 @@ const IPODetails: React.FC = () => {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+                        {/* Mobile */}
+                        <div className="md:hidden space-y-2">
+                            {ipoDetails.peerComparison.map((peer: any, idx: number) => (
+                                <div key={peer.company} className={`rounded-xl border overflow-hidden ${idx === 0 ? 'border-indigo-500 ring-2 ring-indigo-500/20' : 'border-indigo-100/50'}`}>
+                                    <div className={`px-4 py-2.5 flex items-center gap-2 ${idx === 0 ? 'bg-indigo-600 text-white' : 'bg-indigo-50/40'}`}>
+                                        {idx === 0 && <span className="w-2 h-2 rounded-full bg-white"></span>}
+                                        <span className={`text-sm font-black ${idx === 0 ? 'text-white' : 'text-indigo-950'}`}>{peer.company}</span>
+                                    </div>
+                                    <div className="grid grid-cols-3 divide-x divide-indigo-50/50 bg-white">
+                                        <div className="px-3 py-2.5 text-center">
+                                            <p className="text-[9px] font-bold text-indigo-400 uppercase">P/E</p>
+                                            <p className="text-sm font-black text-indigo-900">{peer.pe}</p>
+                                        </div>
+                                        <div className="px-3 py-2.5 text-center">
+                                            <p className="text-[9px] font-bold text-indigo-400 uppercase">ROE</p>
+                                            <p className="text-sm font-black text-emerald-600">{peer.roe}</p>
+                                        </div>
+                                        <div className="px-3 py-2.5 text-center">
+                                            <p className="text-[9px] font-bold text-indigo-400 uppercase">Mkt Cap</p>
+                                            <p className="text-sm font-black text-indigo-950">{peer.mcap}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
 

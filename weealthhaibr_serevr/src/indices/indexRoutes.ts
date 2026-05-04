@@ -15,17 +15,15 @@ router.get('/filters', async (_req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const { exchange, search, category } = req.query;
-        let data = await IndexService.getIndicesFromDB(exchange as string, category as string);
+        const { exchange, search, category, limit, offset } = req.query;
+        const data = await IndexService.getIndicesFromDB(
+            exchange as string, 
+            category as string, 
+            search as string,
+            limit ? parseInt(limit as string) : undefined,
+            offset ? parseInt(offset as string) : undefined
+        );
         
-        if (search) {
-            const query = (search as string).toLowerCase();
-            data = data.filter((idx: any) => 
-                idx.name.toLowerCase().includes(query) || 
-                idx.exchange.toLowerCase().includes(query)
-            );
-        }
-
         return res.json({ success: true, data });
     } catch (error: any) {
         return res.status(500).json({ success: false, message: error.message });

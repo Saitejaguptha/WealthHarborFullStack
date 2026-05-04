@@ -151,8 +151,8 @@ const enhanceIndex = (idx: any): IndexData => {
 };
 
 
-export const getIndicesFromDB = async (exchange?: string, category?: string) => {
-    let query = supabase.from('stock_indices').select('*');
+export const getIndicesFromDB = async (exchange?: string, category?: string, search?: string, limit: number = 12, offset: number = 0) => {
+    let query = supabase.from('stock_indices').select('*', { count: 'exact' });
 
     if (exchange && exchange !== 'All') {
         query = query.eq('exchange', exchange);
@@ -160,11 +160,25 @@ export const getIndicesFromDB = async (exchange?: string, category?: string) => 
     if (category && category !== 'All') {
         query = query.eq('category', category);
     }
+    if (search) {
+        query = query.ilike('index_name', `%${search}%`);
+    }
 
-    const { data, error } = await query;
+    // Add pagination
+    query = query.range(offset, offset + limit - 1);
+    
+    // Sort by name for consistency
+    query = query.order('index_name', { ascending: true });
+
+    const { data, error, count } = await query;
     if (error) throw error;
 
-    return (data || []).map(enhanceIndex);
+    return {
+        indices: (data || []).map(enhanceIndex),
+        total: count || 0,
+        limit,
+        offset
+    };
 };
 
 export const getIndicesFilters = async () => {
@@ -184,7 +198,7 @@ export const getIndexByName = async (name: string) => {
     const { data, error } = await supabase
         .from('stock_indices')
         .select('*')
-        .eq('index_name', name)
+        .ilike('index_name', name)
         .single();
     
     if (error || !data) return null;

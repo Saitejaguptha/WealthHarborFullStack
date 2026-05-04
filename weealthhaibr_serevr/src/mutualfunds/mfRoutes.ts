@@ -17,8 +17,15 @@ router.get('/filters', async (_req, res) => {
 // GET /api/mutual-funds — List all MFs
 router.get('/', async (req, res) => {
     try {
-        const { amc_name, category, plan_type } = req.query;
-        const data = await GetMFsService.getAllMFs(amc_name as string, category as string, plan_type as string);
+        const { amc_name, category, plan_type, search, limit, offset } = req.query;
+        const data = await GetMFsService.getAllMFs(
+            amc_name as string, 
+            category as string, 
+            plan_type as string,
+            search as string,
+            limit ? parseInt(limit as string) : undefined,
+            offset ? parseInt(offset as string) : undefined
+        );
         return res.json({ success: true, data });
     } catch (error: any) {
         return res.status(500).json({ success: false, message: error.message });

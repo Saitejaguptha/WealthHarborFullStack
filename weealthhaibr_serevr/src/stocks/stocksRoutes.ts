@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
     let data = GetStocksService.getAllStocks();
     
     // Server-side filtering
-    const { search, cap, sector } = req.query;
+    const { search, cap, sector, limit, offset } = req.query;
     if (search) {
         data = data.filter(stock => 
             stock.name.toLowerCase().includes((search as string).toLowerCase()) ||
@@ -27,8 +27,12 @@ router.get('/', (req, res) => {
         data = data.filter(stock => stock.sector === sector);
     }
     
-    // Only return fields needed for the listing page
-    const basicData = data.map(stock => ({
+    const total = data.length;
+    const l = limit ? parseInt(limit as string) : 12;
+    const o = offset ? parseInt(offset as string) : 0;
+
+    // Only return fields needed for the listing page and slice for pagination
+    const basicData = data.slice(o, o + l).map(stock => ({
         id: stock.id,
         symbol: stock.symbol,
         name: stock.name,
@@ -45,7 +49,7 @@ router.get('/', (req, res) => {
         eps: stock.eps
     }));
 
-    return res.json({ success: true, data: basicData });
+    return res.json({ success: true, data: { stocks: basicData, total, limit: l, offset: o } });
 });
 
 // GET /api/stocks/:symbol — Full stock details

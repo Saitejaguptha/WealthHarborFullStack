@@ -176,14 +176,30 @@ const enhanceETF = (etf: any): ETFData => {
 };
 
 
-export const getETFsFromDB = async (category?: string) => {
-    let query = supabase.from('etf_list').select('*');
+export const getETFsFromDB = async (category?: string, search?: string, limit: number = 12, offset: number = 0) => {
+    let query = supabase.from('etf_list').select('*', { count: 'exact' });
     if (category && category !== 'All') {
         query = query.eq('category_theme', category);
     }
-    const { data, error } = await query;
+    if (search) {
+        query = query.or(`etf_name.ilike.%${search}%,ticker_symbol.ilike.%${search}%`);
+    }
+
+    // Add pagination
+    query = query.range(offset, offset + limit - 1);
+    
+    // Sort for consistency
+    query = query.order('etf_name', { ascending: true });
+
+    const { data, error, count } = await query;
     if (error) throw error;
-    return (data || []).map(enhanceETF);
+
+    return {
+        etfs: (data || []).map(enhanceETF),
+        total: count || 0,
+        limit,
+        offset
+    };
 };
 
 export const getETFFilters = async () => {

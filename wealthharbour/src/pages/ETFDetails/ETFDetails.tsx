@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { 
     FiArrowLeft, FiActivity, FiZap, FiBarChart2, FiTrendingUp, 
     FiCheck, FiPlus, FiDroplet, FiBriefcase, FiLayers, 
@@ -12,7 +13,6 @@ import { useAppSelector } from '../../store/hooks';
 import { formatNumberEnIn } from '../../utils/numberFormat';
 import PageShell from '../../components/layout/PageShell';
 import PortfolioAnalysis from '../../components/common/PortfolioAnalysis';
-import type { ETF } from '../../types/etf';
 
 const getSentimentStyles = (sentiment: string) => {
     switch (sentiment?.toUpperCase()) {
@@ -35,30 +35,14 @@ const ETFDetails: React.FC = () => {
     const navigate = useNavigate();
     const watchlist = useAppSelector(state => state.auth.watchlist);
     
-    const [etf, setEtf] = useState<ETF | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { data: etf, isLoading, isError, error } = useQuery({
+        queryKey: ['etf', id],
+        queryFn: () => ETFService.analyzeETF(id!),
+        enabled: !!id,
+        staleTime: 1000 * 60 * 5, // 5 minutes
+    });
 
     const inWatchlist = etf ? watchlist.some(w => w.item_id === etf.id) : false;
-
-    const loadETF = async () => {
-        if (!id) return;
-        setIsLoading(true);
-        setError(null);
-        try {
-            const data = await ETFService.analyzeETF(id);
-            if (data) setEtf(data);
-            else setError("ETF not found");
-        } catch (err) {
-            setError("Failed to load ETF details.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        loadETF();
-    }, [id]);
 
     const sections = useMemo(() => {
         if (!etf) return [];
@@ -123,16 +107,16 @@ const ETFDetails: React.FC = () => {
         return (
             <div className="flex-1 flex flex-col items-center justify-center p-20">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
-                <p className="mt-4 text-indigo-900/60 font-black tracking-widest uppercase text-xs">Syncing Market Data...</p>
+                <p className="mt-4 text-indigo-900/60 font-black tracking-widest uppercase text-xs animate-pulse">Syncing Market Data...</p>
             </div>
         );
     }
 
-    if (error || !etf) {
+    if (isError || !etf) {
         return (
             <div className="flex flex-col items-center justify-center p-10 h-[60vh]">
-                <h2 className="text-3xl font-black text-indigo-950 mb-4">{error || "ETF not found"}</h2>
-                <button onClick={() => navigate('/etfs')} className="px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-100">
+                <h2 className="text-3xl font-black text-indigo-950 mb-4">{(error as any)?.message || "ETF not found"}</h2>
+                <button onClick={() => navigate('/etfs')} className="px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-100 hover:scale-105 transition-transform active:scale-95">
                     Back to ETF Hub
                 </button>
             </div>
@@ -248,8 +232,6 @@ const ETFDetails: React.FC = () => {
                             ))}
                         </div>
 
-
-
                         {/* Analysis Tags */}
                         {etf.validations && etf.validations.length > 0 && (
                             <div className="flex flex-wrap gap-2 pt-4 border-t border-indigo-50/50">
@@ -263,9 +245,7 @@ const ETFDetails: React.FC = () => {
                     </div>
                 </div>
 
-
             </div>
-
 
             {/* History Chart */}
             <div className="mb-16">
@@ -326,4 +306,3 @@ const ETFDetails: React.FC = () => {
 };
 
 export default ETFDetails;
-

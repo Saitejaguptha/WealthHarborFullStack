@@ -4,7 +4,8 @@
 import * as ETFService from '../etfService';
 
 /** Get all ETFs (summary list) */
-export const getAllETFs = async (category?: string) => ETFService.getETFsFromDB(category);
+export const getAllETFs = async (category?: string, search?: string, limit?: number, offset?: number) => 
+    ETFService.getETFsFromDB(category, search, limit, offset);
 
 /** Get full ETF details by ID */
 export const getETFById = async (id: string) => 

@@ -77,7 +77,7 @@ const GlobalSearch: React.FC = () => {
                         change: idx.change,
                         isPositive: idx.isPositive,
                         type: 'Index' as const,
-                        route: `/indices/${encodeURIComponent(idx.name)}`
+                        route: `/index-details/${encodeURIComponent(idx.name)}`
                     })),
                     ...etfs.filter(e => e.name.toLowerCase().includes(query.toLowerCase()) || e.symbol.toLowerCase().includes(query.toLowerCase())).slice(0, 3).map(e => ({
                         id: e.id,

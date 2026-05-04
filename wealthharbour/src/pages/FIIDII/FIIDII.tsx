@@ -183,15 +183,16 @@ const FIIDII: React.FC = () => {
                     </div>
 
                     <div className="bg-white border border-indigo-50 rounded-[2.5rem] shadow-sm overflow-hidden">
-                        <div className="px-10 py-8 border-b border-indigo-50 flex items-center justify-between">
-                            <h2 className="text-xl font-black text-indigo-950 uppercase tracking-tight">Ledger of Transactions</h2>
-                            <div className="flex items-center gap-2 px-4 py-2 bg-indigo-50 rounded-xl text-indigo-600 text-[10px] font-black uppercase tracking-widest">
+                        <div className="px-6 md:px-10 py-6 md:py-8 border-b border-indigo-50 flex items-center justify-between gap-3">
+                            <h2 className="text-lg md:text-xl font-black text-indigo-950 uppercase tracking-tight">Ledger of Transactions</h2>
+                            <div className="flex items-center gap-2 px-3 md:px-4 py-2 bg-indigo-50 rounded-xl text-indigo-600 text-[9px] md:text-[10px] font-black uppercase tracking-widest shrink-0">
                                 <FiCalendar /> Daily Records
                             </div>
                         </div>
-                        <div className="overflow-x-auto custom-scrollbar pb-4">
-                            <table className="w-full min-w-max">
 
+                        {/* ── Desktop: Table ── */}
+                        <div className="hidden md:block overflow-x-auto custom-scrollbar pb-4">
+                            <table className="w-full min-w-max">
                                 <thead>
                                     <tr className="bg-indigo-50/30">
                                         <th className="px-10 py-5 text-left text-[10px] font-black text-indigo-900/40 uppercase tracking-widest">Date</th>
@@ -201,7 +202,6 @@ const FIIDII: React.FC = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-indigo-50/50">
-                                    {/* ─── Aggregate Totals Row — pinned at top ─── */}
                                     <tr className="bg-indigo-950">
                                         <td className="px-10 py-6 font-black text-white uppercase text-[10px] tracking-widest">
                                             Aggregate Ecosystem Flow
@@ -216,7 +216,6 @@ const FIIDII: React.FC = () => {
                                             {totals.total > 0 ? '+' : ''}{formatNumberEnIn(totals.total)}
                                         </td>
                                     </tr>
-                                    {/* ─── Daily Rows ─── */}
                                     {data.map((row: InstitutionalData, idx: number) => (
                                         <tr key={idx} className="hover:bg-indigo-50/20 transition-colors group">
                                             <td className="px-10 py-5">
@@ -240,6 +239,67 @@ const FIIDII: React.FC = () => {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* ── Mobile: Stacked Cards ── */}
+                        <div className="md:hidden">
+                            {/* Aggregate totals card */}
+                            <div className="bg-indigo-950 px-5 py-4">
+                                <p className="text-[9px] font-black text-white/60 uppercase tracking-widest mb-3">Aggregate Ecosystem Flow</p>
+                                <div className="grid grid-cols-3 gap-3">
+                                    <div>
+                                        <p className="text-[8px] font-black text-white/40 uppercase tracking-widest">FII</p>
+                                        <p className={`text-sm font-black ${totals.fii >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                            {totals.fii > 0 ? '+' : ''}{formatNumberEnIn(totals.fii)}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[8px] font-black text-white/40 uppercase tracking-widest">DII</p>
+                                        <p className={`text-sm font-black ${totals.dii >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                            {totals.dii > 0 ? '+' : ''}{formatNumberEnIn(totals.dii)}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[8px] font-black text-white/40 uppercase tracking-widest">Net</p>
+                                        <p className={`text-sm font-black ${totals.total >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                            {totals.total > 0 ? '+' : ''}{formatNumberEnIn(totals.total)}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Daily rows */}
+                            <div className="divide-y divide-indigo-50/50">
+                                {data.map((row: InstitutionalData, idx: number) => (
+                                    <div key={idx} className="px-5 py-4">
+                                        <div className="flex items-center gap-2 mb-2.5">
+                                            <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-400">
+                                                <FiCalendar size={13} />
+                                            </div>
+                                            <span className="font-black text-indigo-950 text-sm">{row.date}</span>
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-3">
+                                            <div>
+                                                <p className="text-[8px] font-black text-indigo-400 uppercase tracking-widest">FII (Cr)</p>
+                                                <p className={`text-sm font-black ${row.fiiNet >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                    {row.fiiNet > 0 ? '+' : ''}{formatNumberEnIn(row.fiiNet)}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[8px] font-black text-indigo-400 uppercase tracking-widest">DII (Cr)</p>
+                                                <p className={`text-sm font-black ${row.diiNet >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                    {row.diiNet > 0 ? '+' : ''}{formatNumberEnIn(row.diiNet)}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[8px] font-black text-indigo-400 uppercase tracking-widest">Net</p>
+                                                <p className={`text-sm font-black ${row.totalNet >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                    {row.totalNet > 0 ? '+' : ''}{formatNumberEnIn(row.totalNet)}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

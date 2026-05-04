@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { 
     FiArrowLeft, FiActivity, FiBriefcase, FiUser, FiTrendingUp, 
     FiDownload, FiPlus, FiCheck, FiShield, FiLayers, 
@@ -10,7 +11,6 @@ import PriceHistoryChart from '../../components/common/PriceHistoryChart';
 import MetricInfo from '../../components/common/MetricInfo';
 import { addToWatchlist, removeFromWatchlist } from '../../utils/watchlistUtils';
 import { useAppSelector } from '../../store/hooks';
-import type { MutualFund } from '../../types/mutualFund';
 import FundPerformanceSection from '../../components/fund/FundPerformanceSection';
 import { formatNumberEnIn, formatIntegerEnIn } from '../../utils/numberFormat';
 import PageShell from '../../components/layout/PageShell';
@@ -38,30 +38,14 @@ const MutualFundDetails: React.FC = () => {
     const navigate = useNavigate();
     const watchlist = useAppSelector(state => state.auth.watchlist);
     
-    const [fund, setFund] = useState<MutualFund | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { data: fund, isLoading, isError, error } = useQuery({
+        queryKey: ['mutual-fund', id],
+        queryFn: () => fetchMFAnalysis(id!),
+        enabled: !!id,
+        staleTime: 1000 * 60 * 5, // 5 minutes
+    });
 
     const inWatchlist = fund ? watchlist.some(w => w.item_id === fund.id) : false;
-
-    const loadFund = async () => {
-        if (!id) return;
-        setIsLoading(true);
-        setError(null);
-        try {
-            const data = await fetchMFAnalysis(id);
-            if (data) setFund(data);
-            else setError("Mutual Fund not found");
-        } catch (err) {
-            setError("Failed to load mutual fund details.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        loadFund();
-    }, [id]);
 
     const sections = useMemo(() => {
         if (!fund) return [];
@@ -126,15 +110,16 @@ const MutualFundDetails: React.FC = () => {
         return (
             <div className="flex-1 flex flex-col items-center justify-center p-20">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+                <p className="mt-4 text-indigo-900/40 text-[10px] font-black uppercase tracking-widest animate-pulse">Assembling Fund Intelligence...</p>
             </div>
         );
     }
 
-    if (error || !fund) {
+    if (isError || !fund) {
         return (
             <div className="flex-1 flex flex-col items-center justify-center p-10 text-center">
-                <h2 className="text-2xl font-black text-indigo-950 mb-4">{error || "Fund not found"}</h2>
-                <button onClick={() => navigate('/mutual-funds')} className="px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black">Back to Mutual Funds</button>
+                <h2 className="text-2xl font-black text-indigo-950 mb-4">{(error as any)?.message || "Fund not found"}</h2>
+                <button onClick={() => navigate('/mutual-funds')} className="px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-100 hover:scale-105 transition-transform active:scale-95">Back to Mutual Funds</button>
             </div>
         );
     }
@@ -248,9 +233,6 @@ const MutualFundDetails: React.FC = () => {
                             ))}
                         </div>
 
-
-
-
                         {/* Analysis Tags */}
                         {fund.validations && fund.validations.length > 0 && (
                             <div className="flex flex-wrap gap-2 pt-4 border-t border-indigo-50/50">
@@ -264,9 +246,7 @@ const MutualFundDetails: React.FC = () => {
                     </div>
                 </div>
 
-
             </div>
-
 
             {/* Price Chart */}
             <div className="mb-16">
@@ -400,4 +380,3 @@ const MutualFundDetails: React.FC = () => {
 };
 
 export default MutualFundDetails;
-

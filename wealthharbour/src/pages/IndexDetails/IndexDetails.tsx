@@ -1,5 +1,6 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import {
     FiArrowLeft, FiTrendingUp, FiTrendingDown, FiPieChart,
     FiActivity, FiTarget, FiDollarSign, FiBarChart2, FiAward,
@@ -7,7 +8,6 @@ import {
     FiZap, FiCheckCircle, FiRepeat
 } from 'react-icons/fi';
 import { IndexService } from '../../services/api';
-import type { MarketIndex } from '../../types/indexData';
 import PriceHistoryChart from '../../components/common/PriceHistoryChart';
 import MetricInfo from '../../components/common/MetricInfo';
 import { useAppSelector } from '../../store/hooks';
@@ -36,11 +36,15 @@ const IndexDetails: React.FC = () => {
 
     const { name } = useParams<{ name: string }>();
     const navigate = useNavigate();
-    const [indexData, setIndexData] = useState<MarketIndex | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
     const watchlist = useAppSelector(state => state.auth.watchlist);
+    
+    const { data: indexData, isLoading, isError, error } = useQuery({
+        queryKey: ['index', name],
+        queryFn: () => IndexService.getIndexByName(decodeURIComponent(name || '')),
+        enabled: !!name,
+        staleTime: 1000 * 60 * 5, // 5 minutes
+    });
+
     const inWatchlist = indexData ? watchlist.some(w => w.item_id === indexData.name) : false;
 
     const toggleWatchlist = () => {
@@ -58,23 +62,6 @@ const IndexDetails: React.FC = () => {
             });
         }
     };
-
-
-    useEffect(() => {
-        const load = async () => {
-            setIsLoading(true);
-            try {
-                const data = await IndexService.getIndexByName(decodeURIComponent(name || ''));
-                if (data) setIndexData(data);
-                else setError('Index not found');
-            } catch {
-                setError('Failed to load index details');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        load();
-    }, [name]);
 
     const sections = useMemo(() => {
         if (!indexData) return [];
@@ -145,14 +132,15 @@ const IndexDetails: React.FC = () => {
     if (isLoading) return (
         <div className="flex-1 flex flex-col items-center justify-center p-20">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+            <p className="mt-4 text-indigo-900/60 font-black uppercase tracking-widest animate-pulse">Analyzing Index Integrity...</p>
         </div>
     );
 
-    if (error || !indexData) {
+    if (isError || !indexData) {
         return (
-            <div className="flex-1 flex flex-col items-center justify-center p-10">
-                <h2 className="text-2xl font-bold text-indigo-900 mb-4">{error || 'Index not found'}</h2>
-                <button onClick={() => navigate('/indices')} className="px-6 py-2 bg-indigo-600 text-white rounded-lg">Back to Indices</button>
+            <div className="flex-1 flex flex-col items-center justify-center p-10 text-center">
+                <h2 className="text-2xl font-black text-indigo-950 mb-4">{(error as any)?.message || 'Index not found'}</h2>
+                <button onClick={() => navigate('/indices')} className="px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-100 hover:scale-105 transition-transform active:scale-95">Back to Indices</button>
             </div>
         );
     }
@@ -217,8 +205,6 @@ const IndexDetails: React.FC = () => {
                     </div>
                 </div>
 
-
-
                 <div className="bg-white border border-indigo-50 p-6 md:p-8 rounded-[2.5rem] shadow-sm relative overflow-hidden">
                     <div className="flex flex-col gap-6 md:gap-8">
                         {/* Header Row */}
@@ -268,8 +254,6 @@ const IndexDetails: React.FC = () => {
                             ))}
                         </div>
 
-
-
                         {/* Validations Row */}
                         {indexData.validations && indexData.validations.length > 0 && (
                             <div className="flex flex-wrap gap-x-8 gap-y-3 pt-4 border-t border-indigo-50/50">
@@ -286,9 +270,7 @@ const IndexDetails: React.FC = () => {
                     </div>
                 </div>
 
-
             </div>
-
 
             {/* Price History Chart */}
             <div className="mb-12">
@@ -373,4 +355,3 @@ const IndexDetails: React.FC = () => {
 };
 
 export default IndexDetails;
-

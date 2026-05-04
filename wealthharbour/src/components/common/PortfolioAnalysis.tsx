@@ -26,11 +26,12 @@ interface PortfolioAnalysisProps {
 const PortfolioAnalysis: React.FC<PortfolioAnalysisProps> = ({ holdings, changes, title = "Portfolio Analysis" }) => {
     return (
         <div className="space-y-12 mt-20">
-            {/* Top Holdings Table */}
+            {/* Top Holdings */}
             <div>
                 <SectionTitle icon={<FiPieChart />} title={title} />
                 <div className="bg-white rounded-[2.5rem] border border-indigo-50 shadow-xl shadow-indigo-50/50 overflow-hidden">
-                    <div className="overflow-x-auto custom-scrollbar pb-2">
+                    {/* ── Desktop: Table ── */}
+                    <div className="hidden md:block overflow-x-auto custom-scrollbar pb-2">
                         <table className="w-full text-left min-w-max">
 
                             <thead>
@@ -61,6 +62,24 @@ const PortfolioAnalysis: React.FC<PortfolioAnalysisProps> = ({ holdings, changes
                                 ))}
                             </tbody>
                         </table>
+                    </div>
+
+                    {/* ── Mobile: Stacked Cards ── */}
+                    <div className="md:hidden divide-y divide-indigo-50/50">
+                        {holdings.map((h, i) => (
+                            <div key={i} className="px-5 py-4 flex items-center justify-between gap-3">
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-black text-indigo-950 truncate">{h.name}</p>
+                                    <p className="text-[10px] font-bold text-indigo-900/40 uppercase tracking-tight mt-0.5">{h.sector || 'N/A'}</p>
+                                </div>
+                                <div className="flex flex-col items-end shrink-0">
+                                    <span className="text-sm font-black text-indigo-950">{h.weightage}%</span>
+                                    <div className="w-16 h-1.5 bg-indigo-50 rounded-full mt-1.5 overflow-hidden">
+                                        <div className="h-full bg-indigo-600" style={{ width: `${h.weightage}%` }} />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

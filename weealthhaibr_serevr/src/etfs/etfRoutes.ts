@@ -17,8 +17,13 @@ router.get('/filters', async (_req, res) => {
 // GET /api/etfs — List all ETFs
 router.get('/', async (req, res) => {
     try {
-        const { category } = req.query;
-        const data = await GetETFsService.getAllETFs(category as string);
+        const { category, search, limit, offset } = req.query;
+        const data = await GetETFsService.getAllETFs(
+            category as string,
+            search as string,
+            limit ? parseInt(limit as string) : undefined,
+            offset ? parseInt(offset as string) : undefined
+        );
         return res.json({ success: true, data });
     } catch (error: any) {
         return res.status(500).json({ success: false, message: error.message });

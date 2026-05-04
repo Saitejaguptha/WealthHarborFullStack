@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
     FiArrowLeft, FiTrendingUp, FiTrendingDown, FiPieChart,
     FiActivity, FiTarget, FiBarChart2, FiAward, FiRefreshCw,
@@ -10,7 +11,6 @@ import MetricInfo from '../../components/common/MetricInfo';
 import { removeFromWatchlist, addToWatchlist } from '../../utils/watchlistUtils';
 import { FiPlus, FiCheck } from 'react-icons/fi';
 import { useAppSelector } from '../../store/hooks';
-import type { Stock } from '../../types/stock';
 import RevenueMixSection from '../../components/stock/RevenueMixSection';
 import PeerComparisonSection from '../../components/stock/PeerComparisonSection';
 import CorporateActionsSection from '../../components/stock/CorporateActionsSection';
@@ -32,41 +32,17 @@ import {
 const StockDetails: React.FC = () => {
     const { symbol } = useParams<{ symbol: string }>();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const watchlist = useAppSelector(state => state.auth.watchlist);
-    const [stock, setStock] = useState<Stock | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    
+    const { data: stock, isLoading, isError, error, refetch } = useQuery({
+        queryKey: ['stock', symbol],
+        queryFn: () => StockAnalysisService.fetchStockAnalysis(symbol!),
+        enabled: !!symbol,
+        staleTime: 1000 * 60 * 5, // 5 minutes
+    });
 
     const inWatchlist = stock ? watchlist.some(w => w.item_id === stock.symbol) : false;
-
-    /**
-     * Refactored Load Function — Uses individual analysis functions.
-     * Everything is a function call to the analysis service.
-     */
-    const loadStockDetails = React.useCallback(async () => {
-        if (!symbol) return;
-        setIsLoading(true);
-        setError(null);
-        try {
-            // Fetch unified data in a single API call
-            const data = await StockAnalysisService.fetchStockAnalysis(symbol);
-
-            if (data) {
-                setStock(data);
-            } else {
-                setError('Stock not found');
-            }
-        } catch (err) {
-            console.error('Fetch error:', err);
-            setError('Failed to load stock details');
-        } finally {
-            setIsLoading(false);
-        }
-    }, [symbol]);
-
-    React.useEffect(() => {
-        loadStockDetails();
-    }, [loadStockDetails]);
 
     const toggleWatchlist = () => {
         if (!stock) return;
@@ -89,16 +65,16 @@ const StockDetails: React.FC = () => {
         return (
             <div className="flex-1 flex flex-col items-center justify-center p-20">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
-                <p className="mt-4 text-indigo-900/60 font-bold tracking-widest uppercase">Analyzing Market Data...</p>
+                <p className="mt-4 text-indigo-900/60 font-bold tracking-widest uppercase animate-pulse">Analyzing Market Data...</p>
             </div>
         );
     }
 
-    if (error || !stock) {
+    if (isError || !stock) {
         return (
-            <div className="flex-1 flex flex-col items-center justify-center p-10">
-                <h2 className="text-2xl font-bold text-indigo-900 mb-4">{error || 'Stock not found'}</h2>
-                <button onClick={() => navigate('/stocks')} className="px-6 py-2 bg-indigo-600 text-white rounded-lg">
+            <div className="flex-1 flex flex-col items-center justify-center p-10 text-center">
+                <h2 className="text-2xl font-black text-indigo-950 mb-4">{(error as any)?.message || 'Stock not found'}</h2>
+                <button onClick={() => navigate('/stocks')} className="px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-100 hover:scale-105 transition-transform active:scale-95">
                     Back to Stocks
                 </button>
             </div>
@@ -157,7 +133,7 @@ const StockDetails: React.FC = () => {
                         <span className="whitespace-nowrap">{inWatchlist ? 'In Watchlist' : 'Add to Watchlist'}</span>
                     </button>
                     <button
-                        onClick={() => { loadStockDetails(); }}
+                        onClick={() => { refetch(); }}
                         className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-white border border-indigo-100 text-indigo-600 font-bold rounded-xl md:rounded-2xl hover:bg-indigo-50 transition-all active:scale-95 shadow-lg shadow-indigo-100/50 text-[11px] md:text-sm"
                     >
                         <FiRefreshCw className="shrink-0" />

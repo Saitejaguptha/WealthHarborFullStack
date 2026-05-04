@@ -4,8 +4,8 @@
 import * as MFService from '../mfService';
 
 /** Get all Mutual Funds (summary list) */
-export const getAllMFs = async (amc_name?: string, category?: string, plan_type?: string) => 
-    MFService.getMutualFundsFromDB(amc_name, category, plan_type);
+export const getAllMFs = async (amc_name?: string, category?: string, plan_type?: string, search?: string, limit?: number, offset?: number) => 
+    MFService.getMutualFundsFromDB(amc_name, category, plan_type, search, limit, offset);
 
 /** Get full MF details by ID */
 export const getMFById = async (id: string) => 

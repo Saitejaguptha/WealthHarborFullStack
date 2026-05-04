@@ -20,11 +20,13 @@ const serverAxios = axios.create({ baseURL: SERVER_URL });
 
 // ─── Stocks ──────────────────────────────────────────────────
 export const StockService = {
-    getStocks: async (filters?: { search?: string; cap?: string; sector?: string }): Promise<Stock[]> => {
+    getStocks: async (filters?: { search?: string; cap?: string; sector?: string; limit?: number; offset?: number }): Promise<{ stocks: Stock[]; total: number; offset: number; limit: number }> => {
         const queryParams = new URLSearchParams();
         if (filters?.search) queryParams.append('search', filters.search);
         if (filters?.cap) queryParams.append('cap', filters.cap);
         if (filters?.sector) queryParams.append('sector', filters.sector);
+        if (filters?.limit) queryParams.append('limit', filters.limit.toString());
+        if (filters?.offset) queryParams.append('offset', filters.offset.toString());
         
         const res = await serverAxios.get(`/api/stocks?${queryParams.toString()}`);
         return res.data.data;
@@ -45,9 +47,12 @@ export const StockService = {
 
 // ─── ETFs ────────────────────────────────────────────────────
 export const ETFService = {
-    getETFs: async (filters?: { category?: string }): Promise<ETF[]> => {
+    getETFs: async (filters?: { category?: string; search?: string; limit?: number; offset?: number }): Promise<{ etfs: ETF[]; total: number; offset: number; limit: number }> => {
         const queryParams = new URLSearchParams();
         if (filters?.category) queryParams.append('category', filters.category);
+        if (filters?.search) queryParams.append('search', filters.search);
+        if (filters?.limit) queryParams.append('limit', filters.limit.toString());
+        if (filters?.offset) queryParams.append('offset', filters.offset.toString());
         const res = await serverAxios.get(`/api/etfs?${queryParams.toString()}`);
         return res.data.data;
     },
@@ -72,11 +77,14 @@ export const ETFService = {
 
 // ─── Mutual Funds ────────────────────────────────────────────
 export const MutualFundService = {
-    getMutualFunds: async (filters?: { amc_name?: string; category?: string; plan_type?: string }): Promise<MutualFund[]> => {
+    getMutualFunds: async (filters?: { amc_name?: string; category?: string; plan_type?: string; search?: string; limit?: number; offset?: number }): Promise<{ funds: MutualFund[]; total: number; offset: number; limit: number }> => {
         const queryParams = new URLSearchParams();
         if (filters?.amc_name) queryParams.append('amc_name', filters.amc_name);
         if (filters?.category) queryParams.append('category', filters.category);
         if (filters?.plan_type) queryParams.append('plan_type', filters.plan_type);
+        if (filters?.search) queryParams.append('search', filters.search);
+        if (filters?.limit) queryParams.append('limit', filters.limit.toString());
+        if (filters?.offset) queryParams.append('offset', filters.offset.toString());
 
         const res = await serverAxios.get(`/api/mutual-funds?${queryParams.toString()}`);
         return res.data.data;
@@ -109,11 +117,13 @@ export const CommodityService = {
 
 // ─── Market Indices ──────────────────────────────────────────
 export const IndexService = {
-    getAllIndices: async (filters?: { search?: string; category?: string; exchange?: string }): Promise<MarketIndex[]> => {
+    getAllIndices: async (filters?: { search?: string; category?: string; exchange?: string; limit?: number; offset?: number }): Promise<{ indices: MarketIndex[]; total: number; offset: number; limit: number }> => {
         const queryParams = new URLSearchParams();
         if (filters?.search) queryParams.append('search', filters.search);
         if (filters?.category) queryParams.append('category', filters.category);
         if (filters?.exchange) queryParams.append('exchange', filters.exchange);
+        if (filters?.limit) queryParams.append('limit', filters.limit.toString());
+        if (filters?.offset) queryParams.append('offset', filters.offset.toString());
         
         const res = await serverAxios.get(`/api/indices?${queryParams.toString()}`);
         return res.data.data;

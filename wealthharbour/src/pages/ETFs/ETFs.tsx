@@ -1,69 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import { FiActivity, FiPieChart } from 'react-icons/fi';
+import { useInView } from 'react-intersection-observer';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import AssetCard from '../../components/common/AssetCard/AssetCard';
+import { CardSkeleton } from '../../components/common/Skeleton';
 import PageShell from '../../components/layout/PageShell';
 import PageHeader from '../../components/layout/PageHeader';
 import FilterBar from '../../components/common/FilterBar';
 import { ETFService, GuideService } from '../../services/api';
-import type { ETF } from '../../types/etf';
 
 const ETFs: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string>('All');
-    const [categories, setCategories] = useState<string[]>(['All']);
-    const [etfs, setEtfs] = useState<ETF[]>([]);
-    const [guide, setGuide] = useState<any>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    
+    const { ref, inView } = useInView({
+        threshold: 0.1,
+    });
 
-    const loadGuide = async () => {
-        const data = await GuideService.getGuide('etfs');
-        if (data) setGuide(data);
-    };
+    // Load Filters
+    const { data: filterData } = useQuery({
+        queryKey: ['etf-filters'],
+        queryFn: () => ETFService.getFilters(),
+        staleTime: Infinity,
+    });
 
-    const loadFilters = async () => {
-        try {
-            const data = await ETFService.getFilters();
-            if (data) {
-                setCategories(data.categories || ['All']);
-            }
-        } catch (err) {
-            console.error('Failed to load filters:', err);
-        }
-    };
+    const categories = filterData?.categories || ['All'];
 
-    const loadETFs = async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const data = await ETFService.getETFs({
-                category: selectedCategory
-            });
-            
-            const filtered = data.filter((etf: ETF) => 
-                etf.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                etf.symbol.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            
-            setEtfs(filtered);
-        } catch (err) {
-            setError('Failed to load ETFs. Please try again.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    // Load Guide
+    const { data: guide } = useQuery({
+        queryKey: ['etfs-guide'],
+        queryFn: () => GuideService.getGuide('etfs'),
+        staleTime: Infinity,
+    });
 
-    useEffect(() => {
-        loadFilters();
-        loadGuide();
-    }, []);
+    // Infinite Query for ETFs
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        isError,
+        error,
+    } = useInfiniteQuery({
+        queryKey: ['etfs', searchTerm, selectedCategory],
+        queryFn: ({ pageParam = 0 }) => ETFService.getETFs({
+            category: selectedCategory,
+            search: searchTerm,
+            limit: 12,
+            offset: pageParam,
+        }),
+        getNextPageParam: (lastPage) => {
+            const nextOffset = lastPage.offset + (lastPage.etfs?.length || 0);
+            return nextOffset < lastPage.total ? nextOffset : undefined;
+        },
+        initialPageParam: 0,
+    });
 
     useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            loadETFs();
-        }, 300);
-        return () => clearTimeout(timeoutId);
-    }, [searchTerm, selectedCategory]);
+        if (inView && hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+        }
+    }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+    const handleFilterChange = (_: string, value: string) => {
+        setSelectedCategory(value);
+    };
+
+    const etfs = data?.pages.flatMap(page => page.etfs || []) || [];
 
     return (
         <PageShell className="animate-in fade-in duration-700">
@@ -82,7 +86,7 @@ const ETFs: React.FC = () => {
                 filters={[
                     { label: 'Category', value: selectedCategory, icon: <FiPieChart />, options: categories }
                 ]}
-                onFilterChange={(_, value) => setSelectedCategory(value)}
+                onFilterChange={handleFilterChange}
                 currentFilters={{
                     'Category': selectedCategory
                 }}
@@ -92,42 +96,57 @@ const ETFs: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 stagger-children">
                 {isLoading ? (
-                    <div className="col-span-full flex flex-col items-center justify-center py-24">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
-                        <p className="mt-4 text-indigo-900/40 text-[10px] font-black uppercase tracking-widest">Optimizing Index View...</p>
-                    </div>
-                ) : error ? (
+                    Array.from({ length: 6 }).map((_, i) => (
+                        <CardSkeleton key={i} />
+                    ))
+                ) : isError ? (
                     <div className="col-span-full py-20 text-center">
                         <div className="text-4xl mb-4">⚠️</div>
-                        <h3 className="text-xl font-black text-rose-600">{error}</h3>
+                        <h3 className="text-xl font-black text-rose-600">{(error as any)?.message || 'Failed to load ETFs'}</h3>
                     </div>
                 ) : etfs.length > 0 ? (
-                    etfs.map((etf) => (
-                        <AssetCard
-                            key={etf.id}
-                            symbol={etf.symbol}
-                            name={etf.name}
-                            subtitle={etf.fundHouse}
-                            price={etf.price}
-                            change={etf.changePercent}
-                            changePercent={true}
-                            isPositive={etf.change >= 0}
-                            tags={[etf.sector]}
-                            detailsRoute={`/etfs/${etf.id}`}
-                            Icon={FiActivity}
-                            analyzeLabel="Analyze ETF"
-                            metrics={[
-                                { label: 'Expense Ratio', value: `${etf.expenseRatio}%` },
-                                { label: 'AUM', value: `₹${etf.aum}` }
-                            ]}
-                            watchlistItem={{
-                                item_id: etf.id.toString(),
-                                item_name: etf.name,
-                                symbol: etf.symbol,
-                                item_type: 'etf'
-                            }}
-                        />
-                    ))
+                    <>
+                        {etfs.map((etf) => (
+                            <AssetCard
+                                key={etf.id}
+                                symbol={etf.symbol}
+                                name={etf.name}
+                                subtitle={etf.fundHouse}
+                                price={etf.price}
+                                change={etf.changePercent}
+                                changePercent={true}
+                                isPositive={(etf.change || 0) >= 0}
+                                tags={[etf.sector]}
+                                detailsRoute={`/etfs/${etf.id}`}
+                                Icon={FiActivity}
+                                analyzeLabel="Analyze ETF"
+                                metrics={[
+                                    { label: 'Expense Ratio', value: `${etf.expenseRatio}%` },
+                                    { label: 'AUM', value: `₹${etf.aum}` }
+                                ]}
+                                watchlistItem={{
+                                    item_id: etf.id.toString(),
+                                    item_name: etf.name,
+                                    symbol: etf.symbol,
+                                    item_type: 'etf'
+                                }}
+                            />
+                        ))}
+
+                        {/* Loading trigger and state */}
+                        <div ref={ref} className="col-span-full py-12 flex justify-center">
+                            {isFetchingNextPage ? (
+                                <div className="flex flex-col items-center">
+                                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-indigo-600"></div>
+                                    <p className="mt-2 text-indigo-900/40 text-[8px] font-black uppercase tracking-widest">Loading More ETFs...</p>
+                                </div>
+                            ) : hasNextPage ? (
+                                <div className="h-4 w-full" />
+                            ) : (
+                                <p className="text-indigo-900/30 text-[10px] font-black uppercase tracking-widest">You've reached the end of the list</p>
+                            )}
+                        </div>
+                    </>
                 ) : (
                     <div className="col-span-full py-24 text-center">
                         <div className="text-8xl mb-6 opacity-10">📂</div>
@@ -150,4 +169,3 @@ const ETFs: React.FC = () => {
 };
 
 export default ETFs;
-

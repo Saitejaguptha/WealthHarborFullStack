@@ -4,8 +4,9 @@
 import { getAllMutualFunds as getSharedMFs } from '../mfService';
 
 const findMF = async (id: string) => {
-    const mfs = await getSharedMFs() as any[];
-    return mfs.find((f: any) => f.id === id);
+    const data = await getSharedMFs();
+    const mfs = data.funds as any[];
+    return mfs.find((f: any) => f.id.toString() === id.toString() || f.symbol === id);
 }
 
 /** Price History for the MF chart */

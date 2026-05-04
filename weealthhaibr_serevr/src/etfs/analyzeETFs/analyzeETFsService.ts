@@ -4,8 +4,9 @@
 import { getAllETFs as getSharedETFs } from '../etfService';
 
 const findETF = async (id: string) => {
-    const etfs = await getSharedETFs() as any[];
-    return etfs.find((e: any) => e.id === id);
+    const data = await getSharedETFs();
+    const etfs = data.etfs as any[];
+    return etfs.find((e: any) => e.id.toString() === id.toString() || e.ticker_symbol === id);
 }
 
 /** Price History for the ETF chart */

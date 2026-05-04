@@ -181,8 +181,8 @@ const enhanceMF = (mf: any): MutualFund => {
 };
 
 
-export const getMutualFundsFromDB = async (amc_name?: string, category?: string, plan_type?: string) => {
-    let query = supabase.from('mutual_funds').select('*');
+export const getMutualFundsFromDB = async (amc_name?: string, category?: string, plan_type?: string, search?: string, limit: number = 12, offset: number = 0) => {
+    let query = supabase.from('mutual_funds').select('*', { count: 'exact' });
 
     if (amc_name && amc_name !== 'All') {
         query = query.eq('amc_name', amc_name);
@@ -193,11 +193,25 @@ export const getMutualFundsFromDB = async (amc_name?: string, category?: string,
     if (plan_type && plan_type !== 'All') {
         query = query.eq('plan_type', plan_type);
     }
+    if (search) {
+        query = query.or(`scheme_name.ilike.%${search}%,amc_name.ilike.%${search}%`);
+    }
 
-    const { data, error } = await query;
+    // Add pagination
+    query = query.range(offset, offset + limit - 1);
+    
+    // Sort by name by default for consistent pagination
+    query = query.order('scheme_name', { ascending: true });
+
+    const { data, error, count } = await query;
     if (error) throw error;
 
-    return (data || []).map(enhanceMF);
+    return {
+        funds: (data || []).map(enhanceMF),
+        total: count || 0,
+        limit,
+        offset
+    };
 };
 
 export const getMFFilters = async () => {

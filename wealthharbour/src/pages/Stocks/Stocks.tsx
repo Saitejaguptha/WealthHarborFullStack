@@ -1,61 +1,68 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiTrendingUp, FiActivity, FiPieChart } from 'react-icons/fi';
-import { type Stock, SECTORS, MARKET_CAPS } from '../../types/stock';
+import { useInView } from 'react-intersection-observer';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { SECTORS, MARKET_CAPS } from '../../types/stock';
 import AssetCard from '../../components/common/AssetCard/AssetCard';
+import { CardSkeleton } from '../../components/common/Skeleton';
 import PageShell from '../../components/layout/PageShell';
 import PageHeader from '../../components/layout/PageHeader';
 import FilterBar from '../../components/common/FilterBar';
-import { StockService } from '../../services/api';
+import { StockService, GuideService } from '../../services/api';
 
 const Stocks: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCap, setSelectedCap] = useState('All');
     const [selectedSector, setSelectedSector] = useState('All');
-    const [allStocks, setAllStocks] = useState<Stock[]>([]);
-    const [guide, setGuide] = useState<any>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+
+    const { ref, inView } = useInView({
+        threshold: 0.1,
+    });
+
+    // Load Guide
+    const { data: guide } = useQuery({
+        queryKey: ['stocks-guide'],
+        queryFn: () => GuideService.getGuide('stocks'),
+        staleTime: Infinity,
+    });
+
+    // Infinite Query for Stocks
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        isError,
+        error,
+    } = useInfiniteQuery({
+        queryKey: ['stocks', searchTerm, selectedCap, selectedSector],
+        queryFn: ({ pageParam = 0 }) => StockService.getStocks({ 
+            cap: selectedCap, 
+            sector: selectedSector,
+            search: searchTerm,
+            limit: 12,
+            offset: pageParam,
+        }),
+        getNextPageParam: (lastPage) => {
+            const nextOffset = lastPage.offset + (lastPage.stocks?.length || 0);
+            return nextOffset < lastPage.total ? nextOffset : undefined;
+        },
+        initialPageParam: 0,
+    });
 
     useEffect(() => {
-        const load = async () => {
-            const { GuideService } = await import('../../services/api');
-            const data = await GuideService.getGuide('stocks');
-            if (data) setGuide(data);
-        };
-        load();
-    }, []);
-
-    useEffect(() => {
-        const loadStocks = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const data = await StockService.getStocks({ 
-                    cap: selectedCap, 
-                    sector: selectedSector 
-                });
-                setAllStocks(data);
-            } catch (err) {
-                console.error('Failed to load stocks:', err);
-                setError('Failed to load stocks. Please try again.');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        loadStocks();
-    }, [selectedCap, selectedSector]);
-
-    const filteredStocks = useMemo(() => {
-        return allStocks.filter(stock => {
-            return stock.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                stock.symbol.toLowerCase().includes(searchTerm.toLowerCase());
-        });
-    }, [searchTerm, allStocks]);
+        if (inView && hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+        }
+    }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     const handleFilterChange = (label: string, value: string) => {
         if (label === 'Market Cap') setSelectedCap(value);
         if (label === 'Sector') setSelectedSector(value);
     };
+
+    const stocks = data?.pages.flatMap(page => page.stocks || []) || [];
 
     return (
         <PageShell className="animate-in fade-in duration-700">
@@ -86,36 +93,51 @@ const Stocks: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 stagger-children">
                 {isLoading ? (
-                    <div className="col-span-full flex flex-col items-center justify-center py-24">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
-                        <p className="mt-4 text-indigo-900/40 text-[10px] font-black uppercase tracking-widest">Fetching Assets...</p>
-                    </div>
-                ) : error ? (
+                    Array.from({ length: 6 }).map((_, i) => (
+                        <CardSkeleton key={i} />
+                    ))
+                ) : isError ? (
                     <div className="col-span-full py-20 text-center">
                         <div className="text-4xl mb-4">⚠️</div>
-                        <h3 className="text-xl font-black text-rose-600">{error}</h3>
+                        <h3 className="text-xl font-black text-rose-600">{(error as any)?.message || 'Failed to load stocks'}</h3>
                     </div>
-                ) : filteredStocks.length > 0 ? (
-                    filteredStocks.map((stock) => (
-                        <AssetCard
-                            key={stock.id}
-                            symbol={stock.symbol}
-                            name={stock.name}
-                            price={stock.price}
-                            change={stock.changePercent}
-                            changePercent={true}
-                            isPositive={stock.change >= 0}
-                            tags={[stock.marketCap, stock.sector]}
-                            detailsRoute={`/stocks/${stock.symbol.toLowerCase()}`}
-                            Icon={FiTrendingUp}
-                            watchlistItem={{
-                                item_id: stock.symbol,
-                                item_name: stock.name,
-                                symbol: stock.symbol,
-                                item_type: 'stock'
-                            }}
-                        />
-                    ))
+                ) : stocks.length > 0 ? (
+                    <>
+                        {stocks.map((stock) => (
+                            <AssetCard
+                                key={stock.id}
+                                symbol={stock.symbol}
+                                name={stock.name}
+                                price={stock.price}
+                                change={stock.changePercent}
+                                changePercent={true}
+                                isPositive={(stock.change || 0) >= 0}
+                                tags={[stock.marketCap, stock.sector]}
+                                detailsRoute={`/stocks/${stock.symbol.toLowerCase()}`}
+                                Icon={FiTrendingUp}
+                                watchlistItem={{
+                                    item_id: stock.symbol,
+                                    item_name: stock.name,
+                                    symbol: stock.symbol,
+                                    item_type: 'stock'
+                                }}
+                            />
+                        ))}
+
+                        {/* Loading trigger and state */}
+                        <div ref={ref} className="col-span-full py-12 flex justify-center">
+                            {isFetchingNextPage ? (
+                                <div className="flex flex-col items-center">
+                                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-indigo-600"></div>
+                                    <p className="mt-2 text-indigo-900/40 text-[8px] font-black uppercase tracking-widest">Loading More Stocks...</p>
+                                </div>
+                            ) : hasNextPage ? (
+                                <div className="h-4 w-full" />
+                            ) : (
+                                <p className="text-indigo-900/30 text-[10px] font-black uppercase tracking-widest">You've reached the end of the list</p>
+                            )}
+                        </div>
+                    </>
                 ) : (
                     <div className="col-span-full py-24 text-center">
                         <div className="text-8xl mb-6 opacity-10">🔍</div>

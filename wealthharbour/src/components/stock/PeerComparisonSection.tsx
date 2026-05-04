@@ -32,7 +32,8 @@ const PeerComparisonSection: React.FC<Props> = ({ peers, currentSymbol }) => {
         <div className="mb-6 md:mb-12">
             <SectionTitle icon={<FiBarChart2 />} title="Peer Comparison" />
             <div className="bg-white rounded-2xl md:rounded-3xl border border-indigo-50 shadow-xl shadow-indigo-50/50 overflow-hidden">
-                <div className="w-full overflow-x-auto custom-scrollbar pb-2">
+                {/* ── Desktop: Table ── */}
+                <div className="hidden md:block w-full overflow-x-auto custom-scrollbar pb-2">
                     <table className="w-full text-sm min-w-max border-collapse">
                         <thead>
                             <tr className="border-b border-indigo-50 bg-indigo-50/50">
@@ -59,6 +60,37 @@ const PeerComparisonSection: React.FC<Props> = ({ peers, currentSymbol }) => {
                             })}
                         </tbody>
                     </table>
+                </div>
+
+                {/* ── Mobile: Stacked Cards ── */}
+                <div className="md:hidden space-y-3 p-3">
+                    {peers.map((peer, i) => {
+                        const isCurrent = peer.symbol === currentSymbol;
+                        return (
+                            <div key={i} className={`rounded-2xl border overflow-hidden ${isCurrent ? 'border-indigo-500 ring-2 ring-indigo-500/20' : 'border-indigo-100/50'}`}>
+                                {/* Company Name Header */}
+                                <div className={`px-4 py-2.5 flex items-center justify-between ${isCurrent ? 'bg-indigo-600 text-white' : 'bg-indigo-50/40'}`}>
+                                    <span className={`text-sm font-black ${isCurrent ? 'text-white' : 'text-indigo-950'}`}>
+                                        {String(peer.name)}
+                                    </span>
+                                    {isCurrent && (
+                                        <span className="text-[9px] bg-white/20 text-white font-black px-2 py-0.5 rounded uppercase tracking-widest">You</span>
+                                    )}
+                                </div>
+                                {/* Metrics */}
+                                <div className="divide-y divide-indigo-50/50 bg-white">
+                                    {cols.filter(c => c.key !== 'name').map(c => (
+                                        <div key={String(c.key)} className="flex justify-between items-center px-4 py-2">
+                                            <span className="text-[11px] font-bold text-indigo-900/50">{c.label}</span>
+                                            <span className="text-[12px] font-black text-indigo-950 tabular-nums">
+                                                {c.fmt ? c.fmt(peer[c.key]) : String(peer[c.key])}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
 

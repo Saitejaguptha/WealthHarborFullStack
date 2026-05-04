@@ -231,48 +231,75 @@ const CurrencyDerivatives: React.FC = () => {
             </div>
 
             <div className="bg-white border border-indigo-50 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-indigo-500/5">
-                <div className="overflow-x-auto custom-scrollbar pb-4">
-                    <table className="w-full text-left min-w-max">
+                {isLoading ? (
+                    <div className="px-8 py-10 text-center">
+                        <div className="flex justify-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-600"></div>
+                        </div>
+                    </div>
+                ) : (
+                    <>
+                        {/* ── Desktop: Table ── */}
+                        <div className="hidden md:block overflow-x-auto custom-scrollbar pb-4">
+                            <table className="w-full text-left min-w-max">
+                                <thead className="bg-indigo-50/50 text-indigo-400 text-[11px] font-black uppercase tracking-widest">
+                                    <tr>
+                                        <th className="px-8 py-5">Currency Pair</th>
+                                        <th className="px-8 py-5">Current Price</th>
+                                        <th className="px-8 py-5">24h Change</th>
+                                        <th className="px-8 py-5 text-right">Volume</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-indigo-50/50">
+                                    {currencies.map((curr, idx) => (
+                                        <tr key={idx} className="hover:bg-indigo-50/20 transition-colors group">
+                                            <td className="px-8 py-6">
+                                                <div className="font-black text-indigo-950">{curr.pair}</div>
+                                            </td>
+                                            <td className="px-8 py-6">
+                                                <div className="font-bold text-indigo-900">{curr.price}</div>
+                                            </td>
+                                            <td className="px-8 py-6">
+                                                <div className={`font-bold flex items-center gap-2 ${curr.trend === 'Up' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                                    <FiActivity className={curr.trend === 'Down' ? 'rotate-180' : ''} />
+                                                    {curr.change}
+                                                </div>
+                                            </td>
+                                            <td className="px-8 py-6 text-right">
+                                                <div className="font-bold text-indigo-900/50">{curr.volume?.toLocaleString()}</div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
 
-                    <thead className="bg-indigo-50/50 text-indigo-400 text-[11px] font-black uppercase tracking-widest">
-                        <tr>
-                            <th className="px-8 py-5">Currency Pair</th>
-                            <th className="px-8 py-5">Current Price</th>
-                            <th className="px-8 py-5">24h Change</th>
-                            <th className="px-8 py-5 text-right">Volume</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-indigo-50/50">
-                        {isLoading ? (
-                            <tr>
-                                <td colSpan={4} className="px-8 py-10 text-center">
-                                    <div className="flex justify-center">
-                                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-600"></div>
+                        {/* ── Mobile: Stacked Cards ── */}
+                        <div className="md:hidden divide-y divide-indigo-50/50">
+                            {currencies.map((curr, idx) => (
+                                <div key={idx} className="px-5 py-4">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="font-black text-indigo-950 text-base">{curr.pair}</span>
+                                        <div className={`font-bold flex items-center gap-1.5 text-sm ${curr.trend === 'Up' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                            <FiActivity className={curr.trend === 'Down' ? 'rotate-180' : ''} size={14} />
+                                            {curr.change}
+                                        </div>
                                     </div>
-                                </td>
-                            </tr>
-                        ) : currencies.map((curr, idx) => (
-                            <tr key={idx} className="hover:bg-indigo-50/20 transition-colors group">
-                                <td className="px-8 py-6">
-                                    <div className="font-black text-indigo-950">{curr.pair}</div>
-                                </td>
-                                <td className="px-8 py-6">
-                                    <div className="font-bold text-indigo-900">{curr.price}</div>
-                                </td>
-                                <td className="px-8 py-6">
-                                    <div className={`font-bold flex items-center gap-2 ${curr.trend === 'Up' ? 'text-emerald-500' : 'text-rose-500'}`}>
-                                        <FiActivity className={curr.trend === 'Down' ? 'rotate-180' : ''} />
-                                        {curr.change}
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Price</p>
+                                            <p className="font-bold text-indigo-900 text-sm">{curr.price}</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Volume</p>
+                                            <p className="font-bold text-indigo-900/50 text-sm">{curr.volume?.toLocaleString()}</p>
+                                        </div>
                                     </div>
-                                </td>
-                                <td className="px-8 py-6 text-right">
-                                    <div className="font-bold text-indigo-900/50">{curr.volume?.toLocaleString()}</div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                </div>
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
         </PageShell>
     );

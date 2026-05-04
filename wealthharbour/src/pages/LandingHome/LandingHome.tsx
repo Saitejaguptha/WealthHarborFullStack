@@ -210,55 +210,94 @@ const LandingHome: React.FC = () => {
             </div>
 
             {/* Returns Table Section */}
-            <div className="mt-12 overflow-x-auto custom-scrollbar pb-4">
+            <div className="mt-12">
                 <div className="flex items-center gap-3 mb-8">
                     <div className="w-1 h-8 bg-indigo-600 rounded-full" />
                     <h2 className="text-2xl font-black text-indigo-950 tracking-tight uppercase">Asset Performance Matrix</h2>
                 </div>
-                
-                <table className="w-full border-separate border-spacing-y-3 min-w-[700px] md:min-w-[800px]">
 
-                    <thead>
-                        <tr className="text-indigo-400 text-[10px] uppercase tracking-widest font-black">
-                            <th className="px-6 py-4 text-left">Asset Type</th>
-                            <th className="px-6 py-4 text-left">Short Term</th>
-                            <th className="px-6 py-4 text-left">Mid Term</th>
-                            <th className="px-6 py-4 text-left">Long Term</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {assetData.map((asset) => (
-                            <tr key={asset.name} className="bg-white hover:bg-indigo-50/50 transition-colors group cursor-pointer" onClick={() => scrollToAsset(asset.name)}>
-                                <td className="px-6 py-5 rounded-l-[1.5rem] border-y border-l border-indigo-50">
-                                    <div className="flex items-center gap-3">
-                                        <span className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors shadow-sm">
-                                            {asset.icon}
-                                        </span>
-                                        <span className="font-black text-indigo-950 text-sm">{asset.name}</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-5 border-y border-indigo-50">
-                                    <div className="flex flex-col">
-                                        <span className="text-rose-500 font-bold text-sm">{asset.shortTerm.returns}</span>
-                                        <span className="text-indigo-400 text-[10px] uppercase tracking-tighter">{asset.shortTerm.span}</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-5 border-y border-indigo-50">
-                                    <div className="flex flex-col">
-                                        <span className="text-amber-500 font-bold text-sm">{asset.midTerm.returns}</span>
-                                        <span className="text-indigo-400 text-[10px] uppercase tracking-tighter">{asset.midTerm.span}</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-5 rounded-r-[1.5rem] border-y border-r border-indigo-50">
-                                    <div className="flex flex-col">
-                                        <span className="text-emerald-600 font-bold text-sm">{asset.longTerm.returns}</span>
-                                        <span className="text-indigo-400 text-[10px] uppercase tracking-tighter">{asset.longTerm.span}</span>
-                                    </div>
-                                </td>
+                {/* ── Desktop: Table ── */}
+                <div className="hidden md:block overflow-x-auto custom-scrollbar pb-4">
+                    <table className="w-full border-separate border-spacing-y-3 min-w-[800px]">
+                        <thead>
+                            <tr className="text-indigo-400 text-[10px] uppercase tracking-widest font-black">
+                                <th className="px-6 py-4 text-left">Asset Type</th>
+                                <th className="px-6 py-4 text-left">Short Term</th>
+                                <th className="px-6 py-4 text-left">Mid Term</th>
+                                <th className="px-6 py-4 text-left">Long Term</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {assetData.map((asset) => (
+                                <tr key={asset.name} className="bg-white hover:bg-indigo-50/50 transition-colors group cursor-pointer" onClick={() => scrollToAsset(asset.name)}>
+                                    <td className="px-6 py-5 rounded-l-[1.5rem] border-y border-l border-indigo-50">
+                                        <div className="flex items-center gap-3">
+                                            <span className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors shadow-sm">
+                                                {asset.icon}
+                                            </span>
+                                            <span className="font-black text-indigo-950 text-sm">{asset.name}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-5 border-y border-indigo-50">
+                                        <div className="flex flex-col">
+                                            <span className="text-rose-500 font-bold text-sm">{asset.shortTerm.returns}</span>
+                                            <span className="text-indigo-400 text-[10px] uppercase tracking-tighter">{asset.shortTerm.span}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-5 border-y border-indigo-50">
+                                        <div className="flex flex-col">
+                                            <span className="text-amber-500 font-bold text-sm">{asset.midTerm.returns}</span>
+                                            <span className="text-indigo-400 text-[10px] uppercase tracking-tighter">{asset.midTerm.span}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-5 rounded-r-[1.5rem] border-y border-r border-indigo-50">
+                                        <div className="flex flex-col">
+                                            <span className="text-emerald-600 font-bold text-sm">{asset.longTerm.returns}</span>
+                                            <span className="text-indigo-400 text-[10px] uppercase tracking-tighter">{asset.longTerm.span}</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* ── Mobile: Stacked Cards ── */}
+                <div className="md:hidden space-y-3">
+                    {assetData.map((asset) => (
+                        <div
+                            key={asset.name}
+                            className="bg-white rounded-2xl border border-indigo-50 overflow-hidden shadow-sm active:scale-[0.98] transition-transform cursor-pointer"
+                            onClick={() => scrollToAsset(asset.name)}
+                        >
+                            {/* Asset header */}
+                            <div className="flex items-center gap-3 px-4 py-3 border-b border-indigo-50/50">
+                                <span className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-sm text-sm">
+                                    {asset.icon}
+                                </span>
+                                <span className="font-black text-indigo-950 text-sm">{asset.name}</span>
+                            </div>
+                            {/* Returns grid */}
+                            <div className="grid grid-cols-3 divide-x divide-indigo-50/50">
+                                <div className="px-3 py-3 text-center">
+                                    <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1">Short</p>
+                                    <p className="text-rose-500 font-black text-sm">{asset.shortTerm.returns}</p>
+                                    <p className="text-indigo-400 text-[8px] uppercase mt-0.5">{asset.shortTerm.span}</p>
+                                </div>
+                                <div className="px-3 py-3 text-center">
+                                    <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1">Mid</p>
+                                    <p className="text-amber-500 font-black text-sm">{asset.midTerm.returns}</p>
+                                    <p className="text-indigo-400 text-[8px] uppercase mt-0.5">{asset.midTerm.span}</p>
+                                </div>
+                                <div className="px-3 py-3 text-center">
+                                    <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1">Long</p>
+                                    <p className="text-emerald-600 font-black text-sm">{asset.longTerm.returns}</p>
+                                    <p className="text-indigo-400 text-[8px] uppercase mt-0.5">{asset.longTerm.span}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
 
             {/* Interactive Beginner Guide Section - Vertical List Full Width */}
